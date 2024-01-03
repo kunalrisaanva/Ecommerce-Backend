@@ -13,7 +13,7 @@ dotenv.config({
 dbConnection()
 .then(()=> {
     app.listen(process.env.PORT || 4000 , ()=> {
-        console.log(`⚙️ Server is running on ${process.env.PORT} ⚙️`);
+        console.log(`\n ⚙️ Server is running on ${process.env.PORT} ⚙️`);
     });
     app.on('error', (err) => {
         // Handle uncaught exceptions or errors here
