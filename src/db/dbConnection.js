@@ -1,4 +1,4 @@
-import dbName from "../constant.js";
+import { dbName } from "../constant.js";
 import mongoose , { connect } from "mongoose";
 
 
