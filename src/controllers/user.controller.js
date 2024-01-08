@@ -10,7 +10,6 @@ const genrateAccessTokenAndRefreshToken = async(user_id) => {
    
     try {
        const user = await User.findById(user_id);
-       console.log(user)
        const accessToken =  await user.genrateAccessToken()
        const refreshToken = await user.genrateRefreshToken()
       
@@ -149,7 +148,7 @@ const logInUser = asyncHandler(async(req,res)=>{
 
 
 const logOutUser = asyncHandler(async(req,res)=>{
-
+      
 })
 
 

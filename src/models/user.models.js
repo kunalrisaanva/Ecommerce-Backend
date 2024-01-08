@@ -58,9 +58,9 @@ userSchema.virtual("fullName").get(function(){
 
 
 userSchema.methods.genrateAccessToken = async function () {
-   return await jwt.sign(
+   return  jwt.sign(
         {
-            id: this._id,
+            _id: this._id,
         },
         process.env.ACCESS_TOKEN_SECRET_KEY,
         { expiresIn: process.env.ACCESS_TOKEN_LIFE_SPAN }
@@ -68,7 +68,7 @@ userSchema.methods.genrateAccessToken = async function () {
 }
 
 userSchema.methods.genrateRefreshToken = async function () {
-   return  await jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET_KEY, {
+   return  jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET_KEY, {
       expiresIn: process.env.REFRESH_TOKEN_LIFE_SPAN,
     })
 }
