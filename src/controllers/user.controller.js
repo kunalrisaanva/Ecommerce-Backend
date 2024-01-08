@@ -21,7 +21,6 @@ const genrateAccessTokenAndRefreshToken = async (user_id) => {
     }
 }
 
-
 const registerUser = asyncHandler(async (req, res) => {
     const { username, lastName, email, password } = req.body
 
@@ -77,8 +76,6 @@ const registerUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(201, user, ' User created Successfully '))
 })
 
-
-
 const logInUser = asyncHandler(async (req, res) => {
     const { email, username, password } = req.body
 
@@ -132,8 +129,6 @@ const logInUser = asyncHandler(async (req, res) => {
         )
 })
 
-
-
 const logOutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user?._id,
@@ -158,6 +153,7 @@ const logOutUser = asyncHandler(async (req, res) => {
 
 
 const refreshToken = asyncHandler(async (req, res) => {
+
     const incomingRefreshToken =
         req.cookies?.refreshToken ||
         req.body.refreshToken ||
@@ -204,4 +200,50 @@ const refreshToken = asyncHandler(async (req, res) => {
         )
 })
 
-export { registerUser, logInUser, logOutUser, refreshToken }
+
+
+
+const updateProfileImage = asyncHandler(async (req, res) => {
+
+    let userImage
+
+    if (req.file && req.file?.path) {
+        userImage = req.file?.path
+    }
+
+    if (!userImage) {
+        throw new ApiError(400, ' Please Provide your image First ')
+    }
+
+    const response = await cloudinaryUploader(userImage)
+
+    //  { to do 
+     // cloudinary.v2.api
+     // .delete_resources(['user cover image'], 
+     //   { type: 'upload', resource_type: 'image' })
+     // .then(console.log);}
+
+
+    const user = await User.findByIdAndUpdate(req.user?._id, {
+        $set: {
+            userImage: response.url || '',
+        },
+    })
+
+    if (!user) {
+      throw new ApiError(404," User not found ")
+    }
+
+    return res
+    .status(200).
+    json(
+      new ApiResponse(
+        200, 
+        { newUrl: response.url }, 
+        ' User Profile has been Updated '
+        )
+    )
+})
+
+
+export { registerUser, logInUser, logOutUser, refreshToken, updateProfileImage }
