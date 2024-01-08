@@ -326,20 +326,22 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 })
 
 
-const getUserProfile = asyncHandler( async()=>{
-  
-  const { username } = req.param
-  console.log(username);
-
-  const user = await User.findById()
-
-
+const getCurrentUser = asyncHandler( async(req,res)=>{
+    
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            req.user,
+            true,
+            " User Details "
+        )
+    )
 }) 
 
 
-const test = asyncHandler( (req,res)=> {
-    mailSender()
-})
+
 
 
 export { 
@@ -347,10 +349,10 @@ export {
   logInUser,
   logOutUser,
   refreshToken,
-  getUserProfile,
+  getCurrentUser,
   updateProfileImage,
   updateAccountDetails,
   chageCurrentPassword,
   forgetPassword,
-  test
+
    }

@@ -21,9 +21,9 @@ export const mailSender =  asyncHandler ( async userEmail => {
 
         const mailOptions = {
             from: process.env.NODEMAILER_USER,
-            to: "ifeeldeadly@gmail.com",
-            subject: 'Test Email',
-            text: 'This is a test email sent using Nodemailer.',
+            to: userEmail,
+            subject: 'Password changed Email',
+            text: 'OTP is Here 00000',
         }
 
         // Send email
