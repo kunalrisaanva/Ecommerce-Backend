@@ -3,6 +3,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.models.js'
 import { cloudinaryUploader } from '../utils/cloudinary.js'
+import  { mailSender }  from '../utils/nodeMailer.js'
 import jwt from 'jsonwebtoken'
 
 
@@ -242,7 +243,7 @@ const chageCurrentPassword = asyncHandler( async()=>{
 
 
 const forgetPassword = asyncHandler( async(req,res)=>{
-
+        // nodedmailer
 })
 
 
@@ -327,9 +328,18 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 
 const getUserProfile = asyncHandler( async()=>{
   
-  const { username } = req.parmas
+  const { username } = req.param
+  console.log(username);
+
+  const user = await User.findById()
+
 
 }) 
+
+
+const test = asyncHandler( (req,res)=> {
+    mailSender()
+})
 
 
 export { 
@@ -341,5 +351,6 @@ export {
   updateProfileImage,
   updateAccountDetails,
   chageCurrentPassword,
-  forgetPassword
+  forgetPassword,
+  test
    }

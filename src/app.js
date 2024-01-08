@@ -21,6 +21,7 @@ app.use(cookieParser());
 // routes
 
 import userRouter from "./routes/user.routes.js";
+
 app.use("/api/v1/user/",userRouter); // url = " http"//localhost:7000/api/v1/user/"
 
 

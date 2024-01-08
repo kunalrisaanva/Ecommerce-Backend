@@ -5,7 +5,8 @@ import {
     logOutUser,
     refreshToken,
     updateProfileImage,
-    updateAccountDetails
+    updateAccountDetails,
+    test
  } from "../controllers/user.controller.js"
 
 import { upload } from "../middlewares/multer.middleware.js";
@@ -26,6 +27,10 @@ router.route('/refresh-token').post(refreshToken);
 router.route('/update-profile').patch(verifyRoute,upload.single("userImage"),updateProfileImage);
 
 router.route("/update-user-details").patch(verifyRoute,updateAccountDetails);
+
+router.route("/test").get(test);
+
+
 
 
 
