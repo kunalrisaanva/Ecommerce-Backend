@@ -16,8 +16,8 @@ const cloudinaryUploader = async(localPath) =>{
             resource_type:"auto",
             public_id:"user cover image"
         });
-        return response
         fs.unlinkSync(localPath);
+        return response
     } catch (error) {
         fs.unlinkSync(localPath);
        console.log("ERROR WHILE UPLOADING IMAGE ON CLOUDINARY",error)   
