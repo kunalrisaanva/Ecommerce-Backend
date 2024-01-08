@@ -24,7 +24,7 @@ const genrateAccessTokenAndRefreshToken = async (user_id) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { username, lastName, email, password } = req.body
 
-    if ([username, email, password].some((fields) => fields?.trim() === '')) {
+    if ([username, email, password].some(fields => fields?.trim() === '')) {
         throw new ApiError(400, ' All Fields Are Required !! ')
     }
 
@@ -167,7 +167,6 @@ const refreshToken = asyncHandler(async (req, res) => {
         incomingRefreshToken,
         process.env.REFRESH_TOKEN_SECRET_KEY
     )
-    console.log(decodeToken)
 
     const user = await User.findById(decodeToken?._id)
 
@@ -201,6 +200,46 @@ const refreshToken = asyncHandler(async (req, res) => {
 })
 
 
+const chageCurrentPassword = asyncHandler( async()=>{
+  
+  const { username } = req.body
+  console.log(username);
+
+}) 
+
+
+const updateAccountDetails = asyncHandler( async(req,res)=> {
+
+    const { username , email , lastName } = req.body;
+
+    if(
+      [username,email,lastName].some(fields => fields?.trim() === "")
+    ){
+      throw new ApiError(400," Fields Should be not empty");
+    }
+
+    const _id = req.user?._id
+
+    const user = await User.findByIdAndUpdate(_id,
+      {
+        $set:{
+            username,
+            email,
+            lastName
+        }
+      }).select(" -password ");
+
+    return res
+    .status(200)
+    .json(
+      200,
+      { user },
+      " User has been Updated ",
+    )
+    
+    
+})
+
 
 
 const updateProfileImage = asyncHandler(async (req, res) => {
@@ -215,7 +254,7 @@ const updateProfileImage = asyncHandler(async (req, res) => {
         throw new ApiError(400, ' Please Provide your image First ')
     }
 
-    const response = await cloudinaryUploader(userImage)
+    const response = await cloudinaryUploader(userImage);
 
     //  { to do 
      // cloudinary.v2.api
@@ -228,7 +267,7 @@ const updateProfileImage = asyncHandler(async (req, res) => {
         $set: {
             userImage: response.url || '',
         },
-    })
+    }).select(" -password ");
 
     if (!user) {
       throw new ApiError(404," User not found ")
@@ -246,4 +285,19 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 })
 
 
-export { registerUser, logInUser, logOutUser, refreshToken, updateProfileImage }
+const getUserProfile = asyncHandler( async()=>{
+  
+  const { username } = req.parmas
+
+}) 
+
+export { 
+  registerUser,
+  logInUser,
+  logOutUser,
+  refreshToken,
+  getUserProfile,
+  updateProfileImage,
+  updateAccountDetails,
+  chageCurrentPassword
+   }

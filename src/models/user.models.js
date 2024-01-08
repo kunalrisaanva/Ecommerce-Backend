@@ -14,7 +14,8 @@ const userSchema = new Schema(
         },
 
         lastName:{
-            type:String
+            type:String,
+            default:""
         },
 
         email: {
