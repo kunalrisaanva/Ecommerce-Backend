@@ -5,6 +5,7 @@ import { User } from '../models/user.models.js'
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import jwt from 'jsonwebtoken'
 
+
 const genrateAccessTokenAndRefreshToken = async (user_id) => {
     try {
         const user = await User.findById(user_id)
@@ -20,6 +21,7 @@ const genrateAccessTokenAndRefreshToken = async (user_id) => {
         throw new ApiError(500, ' something went wrong while genrating tokens ')
     }
 }
+
 
 const registerUser = asyncHandler(async (req, res) => {
     const { username, lastName, email, password } = req.body
@@ -76,6 +78,7 @@ const registerUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(201, user, ' User created Successfully '))
 })
 
+
 const logInUser = asyncHandler(async (req, res) => {
     const { email, username, password } = req.body
 
@@ -128,6 +131,7 @@ const logInUser = asyncHandler(async (req, res) => {
             })
         )
 })
+
 
 const logOutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
@@ -202,10 +206,44 @@ const refreshToken = asyncHandler(async (req, res) => {
 
 const chageCurrentPassword = asyncHandler( async()=>{
   
-  const { username } = req.body
-  console.log(username);
+  const { password , newPassword } = req.body
+  
+  console.log(password);
 
-}) 
+  // edite it later 
+
+  if(!( password === newPassword )){
+      throw new ApiError(400," your password does not match ");
+
+  }
+  
+  const user = await User.findByIdAndUpdate(req.user?._id,{
+    $set:{
+      password:newPassword
+    }
+  },{new:true}).select(" -password ");
+
+
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(
+      200,
+      {
+        user
+      },
+      " Password has been changed "
+    )
+  )
+
+
+
+});
+
+
+const forgetPassword = asyncHandler( async(req,res)=>{
+
+})
 
 
 const updateAccountDetails = asyncHandler( async(req,res)=> {
@@ -227,6 +265,8 @@ const updateAccountDetails = asyncHandler( async(req,res)=> {
             email,
             lastName
         }
+      },{
+        new:true
       }).select(" -password ");
 
     return res
@@ -291,6 +331,7 @@ const getUserProfile = asyncHandler( async()=>{
 
 }) 
 
+
 export { 
   registerUser,
   logInUser,
@@ -299,5 +340,6 @@ export {
   getUserProfile,
   updateProfileImage,
   updateAccountDetails,
-  chageCurrentPassword
+  chageCurrentPassword,
+  forgetPassword
    }
