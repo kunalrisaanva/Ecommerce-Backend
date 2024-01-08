@@ -1,5 +1,6 @@
-import {v2 as cloudinary} from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs"    
+
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
@@ -13,8 +14,9 @@ const cloudinaryUploader = async(localPath) =>{
         if(!localPath) return null
        const response = await cloudinary.uploader.upload(localPath,{
             resource_type:"auto",
-            public_id:"image type leter name it"
+            public_id:"user cover image"
         });
+        return response
         fs.unlinkSync(localPath);
     } catch (error) {
         fs.unlinkSync(localPath);
