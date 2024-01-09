@@ -2,11 +2,14 @@ import nodemailer from 'nodemailer'
 import { asyncHandler } from './asyncHandler.js'
 import { ApiError } from './ApiError.js'
 
-export const mailSender =  asyncHandler ( async userEmail => {
+
+export const mailSender =  asyncHandler ( async (userEmail,otp) => {
   
     try {
 
         // Create a Nodemailer transporter
+
+        console.table("user:",userEmail,"otp:",otp);
 
         const transporter = nodemailer.createTransport({
 
@@ -18,12 +21,12 @@ export const mailSender =  asyncHandler ( async userEmail => {
         })
 
         // Email content
-
+        
         const mailOptions = {
             from: process.env.NODEMAILER_USER,
             to: userEmail,
-            subject: 'Password changed Email',
-            text: 'OTP is Here 00000',
+            subject: 'Reset Password ',
+            text: `OTP is Here ${otp}`,
         }
 
         // Send email

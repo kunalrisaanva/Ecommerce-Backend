@@ -4,7 +4,15 @@ import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.models.js'
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import  { mailSender }  from '../utils/nodeMailer.js'
+import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
+
+
+
+
+function otpGeneratorFunc(){
+    return otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
+ }
 
 
 const genrateAccessTokenAndRefreshToken = async (user_id) => {
@@ -237,13 +245,82 @@ const chageCurrentPassword = asyncHandler( async()=>{
     )
   )
 
+});
 
+// later 
+
+// class IntneralPassword {
+
+//     static changePassword = asyncHandler( async(req,res) => {
+
+//     });
+
+// }
+
+
+const forgetPassword = asyncHandler( async(req,res)=>{
+
+       const { email } = req.body
+    
+       const user = await User.findOne(email);
+
+       if(!user){
+        throw new ApiError(404)," User not found "
+       }
+
+       const otp = otpGeneratorFunc();
+       user.otp = otp
+       await user.save({validateBeforeSave:false})
+       mailSender(user.email,otp);
+       
+       return res
+       .status(200)
+       .json(
+        new ApiResponse(
+            200,
+            {},
+            " check Your Mail "
+
+        )
+       )
+
+      
 
 });
 
 
-const forgetPassword = asyncHandler( async(req,res)=>{
-        // nodedmailer
+const otpMatch = asyncHandler( async(req,res)=> {
+
+    const { otp } = req.param
+
+    const user = await User.findOne(otp);
+
+    if(!user){
+        throw new ApiError(400," OTP does not Match ")
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            {},
+            " OTP Mached "
+        )
+    )
+
+});
+
+const resetPassword = asyncHandler( async(req,res)=>{
+
+   const {newPassword} = req.body  
+   
+   const user = await User.findOne(otp);
+
+   // note set cookie otp lete it clear it 
+
+
+
 })
 
 
