@@ -4,16 +4,8 @@ import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.models.js'
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import  { mailSender as sendMail }  from '../utils/nodeMailer.js'
-import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
 import crypto from "crypto"
-
-
-
-
-function otpGeneratorFunc(){
-    return otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
- }
 
 
 const genrateAccessTokenAndRefreshToken = async (user_id) => {
@@ -380,8 +372,8 @@ const updateProfileImage = asyncHandler(async (req, res) => {
     }
 
     const response = await cloudinaryUploader(userImage);
-
-    //  { to do 
+        // to do
+    //  { 
      // cloudinary.v2.api
      // .delete_resources(['user cover image'], 
      //   { type: 'upload', resource_type: 'image' })
