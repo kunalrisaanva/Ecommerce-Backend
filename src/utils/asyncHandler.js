@@ -1,9 +1,11 @@
 
-const asyncHandler = reqestHandler => {
-    return (req,res,next)=> {
-       Promise.resolve(reqestHandler(req,res,next)).catch(err => next(err)); 
-    }
+const asyncHandler = (passedFuntion) => (req,res,next) =>{
+     
+    Promise.resolve(passedFuntion(req,res,next)).catch(next);
+
+    
 }
+
 
 
 

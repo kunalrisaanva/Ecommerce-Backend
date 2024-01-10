@@ -3,17 +3,18 @@ import { asyncHandler } from './asyncHandler.js'
 import { ApiError } from './ApiError.js'
 
 
-export const mailSender =  asyncHandler ( async (userEmail,otp) => {
+export const mailSender =  asyncHandler ( async (userEmail,message) => {
   
     try {
 
         // Create a Nodemailer transporter
 
-        console.table("user:",userEmail,"otp:",otp);
-
+       
         const transporter = nodemailer.createTransport({
 
             service: 'gmail',
+            host:process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
             auth: {
                 user: process.env.NODEMAILER_USER,
                 pass: process.env.NODEMAILER_PASS,
@@ -26,7 +27,7 @@ export const mailSender =  asyncHandler ( async (userEmail,otp) => {
             from: process.env.NODEMAILER_USER,
             to: userEmail,
             subject: 'Reset Password ',
-            text: `OTP is Here ${otp}`,
+            text: `${message}`,
         }
 
         // Send email

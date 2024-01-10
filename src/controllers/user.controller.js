@@ -3,9 +3,10 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.models.js'
 import { cloudinaryUploader } from '../utils/cloudinary.js'
-import  { mailSender }  from '../utils/nodeMailer.js'
+import  { mailSender as sendMail }  from '../utils/nodeMailer.js'
 import otpGenerator from 'otp-generator'
 import jwt from 'jsonwebtoken'
+import crypto from "crypto"
 
 
 
@@ -35,7 +36,7 @@ const genrateAccessTokenAndRefreshToken = async (user_id) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { username, lastName, email, password } = req.body
 
-    if ([username, email, password].some(fields => fields?.trim() === '')) {
+    if ([username, email, password].some(fields => fields?.trim() === '' || undefined )) {
         throw new ApiError(400, ' All Fields Are Required !! ')
     }
 
@@ -62,8 +63,8 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const createdUser = await User.create({
-        username: username.toLowerCase(),
-        lastName: lastName.toLowerCase(),
+        username: username?.toLowerCase(),
+        lastName: lastName?  lastName.toLowerCase() : undefined ,
         email,
         password,
         userImage: userImageUrl?.url || '',
@@ -80,7 +81,6 @@ const registerUser = asyncHandler(async (req, res) => {
         )
     }
 
-    console.log(createdUser.fullName)
 
     return res
         .status(200)
@@ -110,8 +110,8 @@ const logInUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, ' This user does not exists')
     }
 
-    const isMatch = user.isPasswordCorrect(password)
-
+    const isMatch = await user.isPasswordCorrect(password);
+    
     if (!isMatch) {
         throw new ApiError(400, ' Invalid User credientals ')
     }
@@ -247,7 +247,7 @@ const chageCurrentPassword = asyncHandler( async()=>{
 
 });
 
-// later 
+// optional  
 
 // class IntneralPassword {
 
@@ -262,24 +262,26 @@ const forgetPassword = asyncHandler( async(req,res)=>{
 
        const { email } = req.body
     
-       const user = await User.findOne(email);
+       const user = await User.findOne({email});
 
        if(!user){
         throw new ApiError(404)," User not found "
        }
-
-       const otp = otpGeneratorFunc();
-       user.otp = otp
-       await user.save({validateBeforeSave:false})
-       mailSender(user.email,otp);
+       const resetToken = await user.getResetToken();
+       await user.save({validateBeforeSave:false});
+       const url = `${process.env.Fronted_Url}/resetPassword/${resetToken}`;
+       const message = `Click on the link To Reset Your Password. ${url}. If you have Not Reqested Then Please Ignore `
+       // sent token via email
+       console.log(user.email)
+       sendMail(user.email,message);
        
        return res
-       .status(200)
+       .status(200) 
        .json(
         new ApiResponse(
             200,
             {},
-            " check Your Mail "
+            `Reset Token has been sent to ${user.email} `
 
         )
        )
@@ -289,37 +291,42 @@ const forgetPassword = asyncHandler( async(req,res)=>{
 });
 
 
-const otpMatch = asyncHandler( async(req,res)=> {
-
-    const { otp } = req.param
-
-    const user = await User.findOne(otp);
-
-    if(!user){
-        throw new ApiError(400," OTP does not Match ")
-    }
-
-    return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            {},
-            " OTP Mached "
-        )
-    )
-
-});
 
 const resetPassword = asyncHandler( async(req,res)=>{
 
-   const {newPassword} = req.body  
+   const {token } = req.params;  
    
-   const user = await User.findOne(otp);
+   
+   const resetPasswordToken = crypto
+   .createHash("sha256")
+   .update(token)
+   .digest("hex");
 
-   // note set cookie otp lete it clear it 
+   const user = await User.findOne(
+    {
+        resetPasswordToken,
+        resetPasswordExpire:{
+            $gt:Date.now()
+        }
+    }
+   )
 
+   if(!user){
+     throw new ApiError(400," Invalid Token Or Has Been expired ")
+   }
 
+   user.password = req.body.password;
+
+   user.resetPasswordToken = undefined;
+   user.resetPasswordExpire = undefined;
+
+   await user.save({validateBeforeSave:false});
+
+   return res
+   .status(200)
+   .json(
+    new ApiResponse(200,{},"Password changed successfully")
+   )
 
 })
 
@@ -431,5 +438,6 @@ export {
   updateAccountDetails,
   chageCurrentPassword,
   forgetPassword,
+  resetPassword
 
    }
