@@ -1,49 +1,49 @@
-import mongoose , { Schema, model ,Types } from 'mongoose';
+// import mongoose , { Schema, model ,Types } from 'mongoose';
 
 
 
-const orderItemSchema = new Schema( {
-   productId:{
-      type:Types.ObjectId,
-      ref:"Product"
-   },
-   quantity:{
-    type:Number,
-    required:true
-   }
-} )
+// const orderItemSchema = new Schema( {
+//    productId:{
+//       type:Types.ObjectId,
+//       ref:"Product"
+//    },
+//    quantity:{
+//     type:Number,
+//     required:true
+//    }
+// } )
 
-const orderSchema = new Schema( {
+// const orderSchema = new Schema( {
     
-    orderPrice:{
-        type:Number,
-        required:true
-    },
+//     orderPrice:{
+//         type:Number,
+//         required:true
+//     },
 
-    customer:{
-        type:Types.ObjectId,
-        ref:"User",
-        required:true
-    },
+//     customer:{
+//         type:Types.ObjectId,
+//         ref:"User",
+//         required:true
+//     },
 
-    orderItem :{
-        type: [orderItemSchema]
-    },
+//     orderItem :{
+//         type: [orderItemSchema]
+//     },
 
-    address:{
-        type:String,
-        requried:true
-    },
+//     address:{
+//         type:String,
+//         requried:true
+//     },
 
-    status:{
-        type:String,
-        enum:['PENDING',"CANCELED", 'DELIVERD'],   // choices
-        default:'PENDING',
-        requried:true
-    },
+//     status:{
+//         type:String,
+//         enum:['PENDING',"CANCELED", 'DELIVERD'],   // choices
+//         default:'PENDING',
+//         requried:true
+//     },
 
-} , { timestamps:true } );
+// } , { timestamps:true } );
 
 
 
-export const Order = model("Model",orderSchema);
+// export const Order = model("Model",orderSchema);

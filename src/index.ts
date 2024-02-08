@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { dbConnection } from "./db/dbConnection.js"
 import { app } from "./app.js";
+
 // import cluster from 'node:cluster';
 // import os from "os";
 
@@ -12,7 +13,7 @@ dotenv.config({
 
 // database connection 
 
-dbConnection()
+ dbConnection()
 .then(()=> {
     app.listen(process.env.PORT || 4000 , ()=> {
         console.log(`\n ⚙️ Server is running on ${process.env.PORT} And PID ${process.pid} ⚙️`);
@@ -24,6 +25,7 @@ dbConnection()
 }).catch((error)=>{
     console.log("MONGODB CONNECTION FALIED !! :",error)
 })
+
 
 
 // if (cluster.isPrimary) {
