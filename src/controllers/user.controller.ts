@@ -4,9 +4,10 @@ import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.models.js'
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import  { mailSender as sendMail }  from '../utils/nodeMailer.js'
+import { fileUpload, fileUpload as uploadFile } from "../utils/uploadS3.js" 
 import jwt from 'jsonwebtoken'
 import crypto from "crypto"
-
+// import {Request , Response, response} from "express"
 
 const genrateAccessTokenAndRefreshToken = async (user_id) => {
     try {
@@ -209,8 +210,7 @@ const chageCurrentPassword = asyncHandler( async()=>{
   
   const { password , newPassword } = req.body
   
-  console.log(password);
-
+  
   // edite it later 
 
   if(!( password === newPassword )){
@@ -328,7 +328,7 @@ const updateAccountDetails = asyncHandler( async(req,res)=> {
     const { username , email , lastName } = req.body;
 
     if(
-      [username,email,lastName].some(fields => fields?.trim() === "")
+      [username,email,lastName].some(fields => fields?.trim() === "" || undefined )
     ){
       throw new ApiError(400," Fields Should be not empty");
     }
@@ -382,9 +382,9 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req.user?._id, {
         $set: {
-            userImage: response.url || '',
+            userImage: response? response.url : '',
         },
-    }).select(" -password ");
+    }).select(" -password -refreshToken -resetPasswordToken -resetPasswordExpire");
 
     if (!user) {
       throw new ApiError(404," User not found ")
@@ -416,8 +416,14 @@ const getCurrentUser = asyncHandler( async(req,res)=>{
     )
 }) 
 
-
-
+const test = asyncHandler(async(req,res)=>{
+    const file =  req.file
+    // console.log(file)
+    const data =  fileUpload(file.path)
+    console.log(data);
+})
+// to do 
+// when getting user profile enter almost product
 
 
 export { 
@@ -426,10 +432,12 @@ export {
   logOutUser,
   refreshToken,
   getCurrentUser,
-  updateProfileImage,
+  updateProfileImage,   // const data =  fileUpload(file)
+  // console.log(data);
   updateAccountDetails,
   chageCurrentPassword,
   forgetPassword,
-  resetPassword
+  resetPassword,
+  test
 
    }

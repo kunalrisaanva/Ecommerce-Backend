@@ -1,5 +1,12 @@
+interface ErrorI {
+    message:string;
+    statusCode:number;
+    data:null;
+}
+
+
 class ApiError extends Error{
-    constructor(statusCode , message = " Something went Wrong ", errors = [] , stack = "" ){
+    constructor(statusCode:number , message:string = " Something went Wrong ", errors:[] = [] , stack = "" ){
             super(message);
             this.statusCode = statusCode,
             this.success = false,

@@ -1,0 +1,23 @@
+PORT = 
+DB_URI = ""
+origin = *
+
+CLOUD_NAME = ''
+API_KEY = ''
+API_SECRET = '' 
+
+
+ACCESS_TOKEN_SECRET_KEY = ""
+ACCESS_TOKEN_LIFE_SPAN = "1d"
+REFRESH_TOKEN_SECRET_KEY = ""
+REFRESH_TOKEN_LIFE_SPAN = "5d"
+
+NODEMAILER_USER = ""
+NODEMAILER_PASS = ""
+
+
+Fronted_Url = "http://localhost:3000/api/v1/user"
+
+
+SMTP_PORT = 
+SMTP_HOST = 

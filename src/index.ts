@@ -20,7 +20,6 @@ dbConnection()
     app.on('error', (err) => {
         // Handle uncaught exceptions or errors here
         console.error('An error occurred:', err);
-        // You might want to perform additional actions like logging or cleanup
       });
 }).catch((error)=>{
     console.log("MONGODB CONNECTION FALIED !! :",error)
