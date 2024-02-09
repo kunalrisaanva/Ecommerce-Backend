@@ -1,6 +1,6 @@
 import { Router , Request , Response} from "express";
-// import { 
-//     registerUser,
+import { 
+    registerUser,
 //     logInUser,
 //     logOutUser,
 //     refreshToken,
@@ -11,9 +11,9 @@ import { Router , Request , Response} from "express";
 //     forgetPassword,
 //     resetPassword,
 //     test
-//  } from "../controllers/user.controller.js"
+ } from "../controllers/user.controller.js"
 
-// import { upload } from "../middlewares/multer.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js"
 // import { verifyJwt as verifyRoute } from '../middlewares/auth.middleware.js'
 
 const router = Router();
@@ -21,7 +21,7 @@ const router = Router();
 // router.route("/test").get((req:Request,res:Response) => res.end("hello there") );
 
 
-// router.route("/register").post(upload.single("userImage"),registerUser);
+router.route("/register").post(upload.single("userImage"),registerUser);
 // router.route("/login-user").post(logInUser)
 
 
