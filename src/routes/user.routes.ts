@@ -1,7 +1,7 @@
-import { Router , Request , Response} from "express";
+import { Router , Request , Response } from "express";
 import { 
     registerUser,
-//     logInUser,
+    logInUser,
 //     logOutUser,
 //     refreshToken,
 //     getCurrentUser,
@@ -14,6 +14,7 @@ import {
  } from "../controllers/user.controller.js"
 
 import { upload } from "../middlewares/multer.middleware.js"
+// import { uploadToS3 } from "../utils/upload.S3Buket.js"
 // import { verifyJwt as verifyRoute } from '../middlewares/auth.middleware.js'
 
 const router = Router();
@@ -22,7 +23,7 @@ const router = Router();
 
 
 router.route("/register").post(upload.single("userImage"),registerUser);
-// router.route("/login-user").post(logInUser)
+router.route("/login-user").post(logInUser)
 
 
 // // secure routes 

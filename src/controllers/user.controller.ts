@@ -1,36 +1,41 @@
 import {Request , Response, NextFunction} from "express"
-import  {NewUserRequestBody } from "../types/types.js"
+import  { NewUserRequestBody , LoginRequestBody } from "../types/types.js"
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.models.js'
-// import { cloudinaryUploader } from '../utils/cloudinary.js'
+// import { uploadMiddleWare } from "../utils/upload.S3Buket.js"
+import { cloudinaryUploader } from '../utils/cloudinary.js'
+import { CustomRequest } from "../types/types.js"
 // import  { mailSender as sendMail }  from '../utils/nodeMailer.js'
 // import { fileUpload, fileUpload as uploadFile } from "../utils/uploadS3.js" 
 // import jwt from 'jsonwebtoken'
 // import crypto from "crypto"
 
-// const genrateAccessTokenAndRefreshToken = async (user_id) => {
-//     try {
-//         const user = await User.findById(user_id)
-//         const accessToken = await user.genrateAccessToken()
-//         const refreshToken = await user.genrateRefreshToken()
+const genrateAccessTokenAndRefreshToken = async (user_id:string) => {
+    try {
+        const user = await User.findById(user_id)
+        const accessToken = await user!.genrateAccessToken() 
+        const refreshToken = await user!.genrateRefreshToken()
 
-//         user.refreshToken = refreshToken
+        user!.refreshToken = refreshToken
 
-//         await user.save({ validateBeforeSave: false })
+        await user!.save({ validateBeforeSave: false })
 
-//         return { accessToken, refreshToken }
-//     } catch (error) {
-//         throw new ApiError(500, ' something went wrong while genrating tokens ')
-//     }
-// }
+        return { accessToken, refreshToken }
+    } catch (error) {
+        throw new ApiError(500, ' something went wrong while genrating tokens ')
+    }
+}
 
 
 const registerUser = asyncHandler( async (
     req:Request<{},{},NewUserRequestBody>, 
-    res:Response) => {  
+    res:Response,
+    next:NextFunction
+    ) => {  
     const { username , lastName , email , password , gender } = req.body
+
 
     if ([username, email, password].some(fields => fields?.trim() === '' || undefined )) {
         throw new ApiError(400, ' All Fields Are Required !! ')
@@ -53,18 +58,18 @@ const registerUser = asyncHandler( async (
  
     let userImageUrl
 
-    // if (req.file && req.file?.path) {
-    //     const userImagePath = req.file.path
-    //     userImageUrl = await cloudinaryUploader(userImagePath)
-    // }
-
+    if (req.file && req.file?.path) {
+        const userImagePath = req.file.path
+        userImageUrl = await cloudinaryUploader(userImagePath)
+    }
+  
     const createdUser = await User.create({
         username: username?.toLowerCase(),
-        lastName: lastName?  lastName.toLowerCase() : undefined ,
+        lastName: lastName?  lastName.toLowerCase() : "" ,
         email,
         password,
         gender,
-        // userImage: userImageUrl?.url || '',
+        userImage: userImageUrl?.url || '',
     })
 
     const user = await User.findOne(createdUser?._id).select(
@@ -78,15 +83,18 @@ const registerUser = asyncHandler( async (
         )
     }
 
-
     return res
         .status(200)
         .json(new ApiResponse(201, user, ' User created Successfully '))
 })
 
 
-const logInUser = asyncHandler(async (req, res) => {
-    const { email, username, password } = req.body
+const logInUser = asyncHandler(async (
+    req:Request<{},{},LoginRequestBody>,
+    res:Response,
+    next:NextFunction
+    ) => {
+    const { email, username, password, } = req.body
     
     if (!(email || password)) {
         throw new ApiError(400, 'All fields are required ')
@@ -113,8 +121,8 @@ const logInUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, ' Invalid User credientals ')
     }
 
-    // const { accessToken, refreshToken } =
-        // await genrateAccessTokenAndRefreshToken(user._id)
+    const { accessToken, refreshToken } =
+        await genrateAccessTokenAndRefreshToken(user?.id)
 
     const loggedInUser = await User.findById(user?._id).select(
         ' -password -refreshToken '
@@ -125,40 +133,44 @@ const logInUser = asyncHandler(async (req, res) => {
         // secure:true
     }
 
-    // return res
-    //     .status(200)
-    //     .cookie('accessToken', accessToken, cookieOptions)
-    //     .cookie('refreshToken', refreshToken, cookieOptions)
-    //     .json(
-    //         new ApiResponse(200, {
-    //             loggedInUser,
-    //             refreshToken,
-    //             accessToken,
-    //         })
-    //     )
+    return res
+        .status(200)
+        .cookie('accessToken', accessToken, cookieOptions)
+        .cookie('refreshToken', refreshToken, cookieOptions)
+        .json(
+            new ApiResponse(200, {
+                loggedInUser,
+                refreshToken,
+                accessToken,
+            })
+        )
 })
 
 
-// const logOutUser = asyncHandler(async (req, res) => {
-//     await User.findByIdAndUpdate(
-//         req.user?._id,
-//         {
-//             $unset: {
-//                 refreshToken: 1,
-//             },
-//         },
-//         { new: true }
-//     )
+const logOutUser = asyncHandler(async (
+    req:CustomRequest,
+    res:Response,
+    next:NextFunction
+    ) => {
+    await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $unset: {
+                refreshToken: 1,
+            },
+        },
+        { new: true }
+    )
 
-//     const cookieOptions = {
-//         httpOnly: true,
-//     }
+    const cookieOptions = {
+        httpOnly: true,
+    }
 
-//     res.status(200)
-//         .clearCookie('accessToken', cookieOptions)
-//         .clearCookie('refreshToken', cookieOptions)
-//         .json(new ApiResponse(200, {}, true, ' user logged out '))
-// })
+    res.status(200)
+        .clearCookie('accessToken', cookieOptions)
+        .clearCookie('refreshToken', cookieOptions)
+        .json(new ApiResponse(200, {},' user logged out '))
+})
 
 
 
@@ -210,7 +222,7 @@ const logInUser = asyncHandler(async (req, res) => {
 // })
 
 
-// const chageCurrentPassword = asyncHandler( async()=>{
+// const chageCurrentPassword = asyncHandler( async(req,res)=>{
   
 //   const { password , newPassword } = req.body
   
@@ -243,15 +255,7 @@ const logInUser = asyncHandler(async (req, res) => {
 
 // });
 
-// // optional  
 
-// // class IntneralPassword {
-
-// //     static changePassword = asyncHandler( async(req,res) => {
-
-// //     });
-
-// // }
 
 
 // const forgetPassword = asyncHandler( async(req,res)=>{
@@ -435,7 +439,7 @@ const logInUser = asyncHandler(async (req, res) => {
 export { 
       
   registerUser,
-//   logInUser,
+  logInUser,
 //   logOutUser,
 //   refreshToken,
 //   getCurrentUser,

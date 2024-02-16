@@ -1,7 +1,6 @@
 import mongoose , { Schema, model ,Types } from 'mongoose';
 
 
-
 const orderItemSchema = new Schema( {
    productId:{
       type:Types.ObjectId,

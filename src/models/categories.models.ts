@@ -1,15 +1,15 @@
-// import mongoose , { Schema, model } from 'mongoose';
+import mongoose , { Schema, model } from 'mongoose';
 
-// const categorySchema = new Schema( {
+const categorySchema = new Schema( {
 
-//         name:{
-//             type:String,
-//             required:true
-//         }
+        name:{
+            type:String,
+            required:true
+        }
 
-// } , { timestamps:true })
-
-
+} , { timestamps:true })
 
 
-// export const Category = model("Category", categorySchema)
+
+
+export const Category = model("Category", categorySchema)
