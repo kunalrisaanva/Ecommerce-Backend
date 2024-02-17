@@ -15,9 +15,10 @@ interface IUser extends Document {
     refreshToken?:string;
     resetPasswordToken?:string,
     resetPasswordExpire?:string,
-    comparePassword(candidatePassword: string): Promise<boolean>; // Define method in interface
-    genrateAccessToken(): Promise<string>; // Define method in interface
-    genrateRefreshToken(): Promise<string>; // Define method in interface
+    comparePassword(candidatePassword: string): Promise<boolean>; 
+    genrateAccessToken(): Promise<string>; 
+    genrateRefreshToken(): Promise<string>;
+    getResetToken(): string
 }
 
 const userSchema: Schema<IUser> = new Schema(

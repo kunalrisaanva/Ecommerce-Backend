@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Request , Response , NextFunction } from "express"
 import jwt , { JwtPayload } from "jsonwebtoken";
-
+import { IncomingHttpHeaders } from "http";
 
 interface CustomRequest extends Request {
   user?:object
@@ -14,7 +14,7 @@ const verifyJwt =  async(req:CustomRequest,res:Response,next:NextFunction) => {
 
     try {
  
-      const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer","");
+      const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer","")
       
       if(!token){
         throw  new ApiError(401,"Unauthorized request ")

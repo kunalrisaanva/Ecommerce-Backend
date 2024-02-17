@@ -22,6 +22,9 @@ export interface LoginRequestBody {
 }    
 
 
-export interface CustomRequest extends Request {
-    user?: { _id: string }; // Assuming _id is of type string
+export interface CustomRequest extends Request<{},{},{password:string;newPassword:string}>  {
+   
+    user?: { _id: string } 
+    
+
 }

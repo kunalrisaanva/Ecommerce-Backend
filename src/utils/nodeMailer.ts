@@ -4,7 +4,7 @@
 // import { ApiError } from './ApiError.js'
 
 
-// export const mailSender =  asyncHandler ( async (userEmail,message) => {
+// export const mailSender =  asyncHandler ( async (userEmail , message ) => {
   
 //     try {
 
@@ -43,8 +43,7 @@
 //     } catch (error) {
 //         throw new ApiError(
 //             400,
-//             error?.message,
-//             ' someting went wrong while sending mail '
+//             error?.message,' someting went wrong while sending mail '
 //         )
 //     }
 

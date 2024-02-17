@@ -12,7 +12,6 @@ const getSingleProduct = asyncHandler( async (req,res) => {
 })
 
 
-
 const updateProduct = asyncHandler( async (req,res) => {
     // TO Do: update single product details 
     
@@ -22,6 +21,11 @@ const updateProduct = asyncHandler( async (req,res) => {
 const deleteProduct = asyncHandler( async (req,res) => {
     // TO Do: delete product 
     
+})
+
+
+const getLetestProduct = asyncHandler( async (req,res) => {
+    // TO Do: get letest product 
 })
 
 
