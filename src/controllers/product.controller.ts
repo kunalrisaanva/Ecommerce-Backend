@@ -6,8 +6,20 @@ import { Product } from "../models/product.models.js";
 
 
 
+const addProduct = asyncHandler( async (req,res) => {
+    // TO Do: add product only admin
+    
+})
+
+
 const getSingleProduct = asyncHandler( async (req,res) => {
     // TO Do: get single product details 
+
+
+
+
+    return res
+    
     
 })
 
@@ -31,10 +43,19 @@ const getLetestProduct = asyncHandler( async (req,res) => {
 
 const getAllProducts = asyncHandler( async (req,res) => {
     // TO Do: get all products 
+    // 2.44
+    // node cache 3.12
     
 })
 
 
+
+
+// genreate product 3.05
+
+export {
+
+}
 
 
 

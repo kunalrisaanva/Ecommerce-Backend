@@ -12,7 +12,7 @@ export type ControllerType = (
     req: Request, 
     res: Response, 
     next: NextFunction
-    ) => Promise <void | Response<any,Record<string, any>>>
+    ) => Promise<void | Response<any, Record<string, any>>>
 
 
 export interface LoginRequestBody {
@@ -22,9 +22,11 @@ export interface LoginRequestBody {
 }    
 
 
-export interface CustomRequest extends Request<{},{},{password:string;newPassword:string}>  {
+export interface CustomRequest extends Request  {
    
-    user?: { _id: string } 
+    user?: {
+        _id:string
+    }
     
-
 }
+

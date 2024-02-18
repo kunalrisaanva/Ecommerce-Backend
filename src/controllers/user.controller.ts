@@ -6,11 +6,12 @@ import  {
     NewUserRequestBody,
     LoginRequestBody,
     
+    
 } from "../types/types.js"
 // import { uploadMiddleWare } from "../utils/upload.S3Buket.js"
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import { CustomRequest } from "../types/types.js"
-// import  { mailSender as sendMail }  from '../utils/nodeMailer.js'
+import  { mailSender  }  from '../utils/nodeMailer.js'
 // import { fileUpload, fileUpload as uploadFile } from "../utils/uploadS3.js" 
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { User } from "../models/user.models.js"
@@ -234,10 +235,10 @@ const chageCurrentPassword = asyncHandler( async(
     res:Response
     )=>{
   
-    const { password , newPassword  } = req.body
-  
+    const { password , newPassword   } = req.body
   
   // edite it later 
+  
 
     if(!( password === newPassword )){
         throw new ApiError(400," your password does not match ");
@@ -250,7 +251,7 @@ const chageCurrentPassword = asyncHandler( async(
         }
     },{new:true}).select(" -password ")
 
-
+ 
     return res
     .status(200)
     .json(
@@ -284,7 +285,7 @@ const forgetPassword = asyncHandler( async(req,res)=>{
        // sent token via email
        console.log(user.email)
        let userEmail = user.email
-    //    sendMail(userEmail,message);
+       mailSender(userEmail,message);
        
        return res
        .status(200) 
@@ -303,124 +304,120 @@ const forgetPassword = asyncHandler( async(req,res)=>{
 
 
 
-// const resetPassword = asyncHandler( async(req,res)=>{
+const resetPassword = asyncHandler( async(req,res)=>{
 
-//    const {token } = req.params;  
+   const {token } = req.params;  
    
    
-//    const resetPasswordToken = crypto
-//    .createHash("sha256")
-//    .update(token)
-//    .digest("hex");
+   const resetPasswordToken = crypto
+   .createHash("sha256")
+   .update(token)
+   .digest("hex");
 
-//    const user = await User.findOne(
-//     {
-//         resetPasswordToken,
-//         resetPasswordExpire:{
-//             $gt:Date.now()
-//         }
-//     }
-//    )
+   const user = await User.findOne(
+    {
+        resetPasswordToken,
+        resetPasswordExpire:{
+            $gt:Date.now()
+        }
+    }
+   )
 
-//    if(!user){
-//      throw new ApiError(400," Invalid Token Or Has Been expired ")
-//    }
+   if(!user){
+     throw new ApiError(400," Invalid Token Or Has Been expired ")
+   }
 
-//    user.password = req.body.password;
+   user.password = req.body.password;
 
-//    user.resetPasswordToken = undefined;
-//    user.resetPasswordExpire = undefined;
+   user.resetPasswordToken = undefined;
+   user.resetPasswordExpire = undefined;
 
-//    await user.save({validateBeforeSave:false});
+   await user.save({validateBeforeSave:false});
 
-//    return res
-//    .status(200)
-//    .json(
-//     new ApiResponse(200,{},"Password changed successfully")
-//    )
+   return res
+   .status(200)
+   .json(
+    new ApiResponse(200,{},"Password changed successfully")
+   )
 
-// })
+})
 
 
-// const updateAccountDetails = asyncHandler( async(
-//     req:CustomRequest,
-//     res:Response
-//     )=> {
+const updateAccountDetails = asyncHandler( async(
+    req:CustomRequest,
+    res:Response
+    )=> {
 
-//     const { username , email , lastName } = req.body;
+    const { username , email , lastName } = req.body;
 
-//     if(
-//       [username,email,lastName].some(fields => fields?.trim() === "" || undefined )
-//     ){
-//       throw new ApiError(400," Fields Should be not empty");
-//     }
+    if(
+      [username,email,lastName].some(fields => fields?.trim() === "" || undefined )
+    ){
+      throw new ApiError(400," Fields Should be not empty");
+    }
+   
+    const updatedUser = await User.findByIdAndUpdate(req.user?._id,
+      {
+        $set:{
+            username,
+            email,
+            lastName
+        }
+      },{
+        new:true
+      }).select(" -password ");
 
-//     const _id = req.user?._id
-
-//     const user = await User.findByIdAndUpdate(_id,
-//       {
-//         $set:{
-//             username,
-//             email,
-//             lastName
-//         }
-//       },{
-//         new:true
-//       }).select(" -password ");
-
-//     return res
-//     .status(200)
-//     .json(
-//         200,
-//         new ApiResponse(200,{},"user detials update successfully ")
-//     )
+    return res
+    .status(200)
+    .json(new ApiResponse(201, {updatedUser}, ' User created Successfully '))
     
     
-// })
+})
 
 
 
-// const updateProfileImage = asyncHandler(async (req, res) => {
+const updateProfileImage = asyncHandler(async (req:CustomRequest, res) => {
 
-//     let userImage
+    let userImage
 
-//     if (req.file && req.file?.path) {
-//         userImage = req.file?.path
-//     }
+    if (req.file && req.file?.path) {
+        userImage = req.file?.path
+    }
 
-//     if (!userImage) {
-//         throw new ApiError(400, ' Please Provide your image First ')
-//     }
+    if (!userImage) {
+        throw new ApiError(400, ' Please Provide your image First ')
+    }
 
-//     const response = await cloudinaryUploader(userImage);
-//         // to do
-//     //  { 
-//      // cloudinary.v2.api
-//      // .delete_resources(['user cover image'], 
-//      //   { type: 'upload', resource_type: 'image' })
-//      // .then(console.log);}
+    const response = await cloudinaryUploader(userImage);
+        // to do delete image 
+
+    //  { 
+     // cloudinary.v2.api
+     // .delete_resources(['user cover image'], 
+     //   { type: 'upload', resource_type: 'image' })
+     // .then(console.log);}
 
 
-//     const user = await User.findByIdAndUpdate(req.user?._id, {
-//         $set: {
-//             userImage: response? response.url : '',
-//         },
-//     }).select(" -password -refreshToken -resetPasswordToken -resetPasswordExpire");
+    const user = await User.findByIdAndUpdate(req.user?._id, {
+        $set: {
+            userImage: response? response.url : '',
+        },
+    }).select(" -password -refreshToken -resetPasswordToken -resetPasswordExpire");
 
-//     if (!user) {
-//       throw new ApiError(404," User not found ")
-//     }
+    if (!user) {
+      throw new ApiError(404," User not found ")
+    }
 
-//     return res
-//     .status(200).
-//     json(
-//       new ApiResponse(
-//         200, 
-//         { newUrl: response.url }, 
-//         ' User Profile has been Updated '
-//         )
-//     )
-// })
+    return res
+    .status(200).
+    json(
+      new ApiResponse(
+        200, 
+        {newUrl:response?.url},
+        ' User Profile has been Updated '
+        )
+    )
+})
 
 
 const getCurrentUser = asyncHandler( async(
@@ -477,9 +474,9 @@ export {
   chageCurrentPassword,
   getCurrentUser,
 //   updateProfileImage,   // const data =  fileUpload(file)
-//   // console.log(data);
-//   updateAccountDetails,
-//   forgetPassword,
+  // console.log(data);
+  updateAccountDetails,
+  forgetPassword,
 //   resetPassword,
 //   test
 
