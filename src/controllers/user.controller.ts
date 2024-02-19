@@ -5,17 +5,16 @@ import { ApiError } from '../utils/ApiError.js'
 import  { 
     NewUserRequestBody,
     LoginRequestBody,
-    
-    
 } from "../types/types.js"
-// import { uploadMiddleWare } from "../utils/upload.S3Buket.js"
+
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import { CustomRequest } from "../types/types.js"
 import  { mailSender  }  from '../utils/nodeMailer.js'
-// import { fileUpload, fileUpload as uploadFile } from "../utils/uploadS3.js" 
+// import { uploadToS3 } from "../middlewares/S3Upload.middleware.js"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { User } from "../models/user.models.js"
 import crypto from "crypto"
+import { IRequest } from "../middlewares/auth.middleware.js"
 
 const genrateAccessTokenAndRefreshToken = async (user_id:string) => {
     try {
@@ -39,7 +38,7 @@ const registerUser = asyncHandler( async (
     res:Response,
     next:NextFunction
     ) => {  
-    const { username , lastName , email , password , gender } = req.body
+    const { username , lastName , email , password , gender } = req.body;
 
 
     if ([username, email, password].some(fields => fields?.trim() === '' || undefined )) {
@@ -58,7 +57,7 @@ const registerUser = asyncHandler( async (
     })
 
     if (existedUser) {
-        throw new ApiError(400, ' User is Already Exists in Db ')
+        throw new ApiError(400, ' User is Already Exists in DB ')
     }
  
     let userImageUrl
@@ -128,7 +127,7 @@ const logInUser = asyncHandler(async (
 
     const { accessToken, refreshToken } =
         await genrateAccessTokenAndRefreshToken(user?.id)
-
+   
     const loggedInUser = await User.findById(user?._id).select(
         ' -password -refreshToken '
     )
@@ -389,7 +388,7 @@ const updateProfileImage = asyncHandler(async (req:CustomRequest, res) => {
     }
 
     const response = await cloudinaryUploader(userImage);
-        // to do delete image 
+        // to do delete old image 
 
     //  { 
      // cloudinary.v2.api
@@ -421,31 +420,22 @@ const updateProfileImage = asyncHandler(async (req:CustomRequest, res) => {
 
 
 const getCurrentUser = asyncHandler( async(
-    req:CustomRequest,
+    req:IRequest,
     res:Response
     )=>{
+      
+        
+    const user = await User.findById(req.userId);
+    
+    if(!user) throw new ApiError(404,"user not found");
 
 
-    if(req.user){
-
-        return res
-        .status(200)
-        .json(
-            new ApiResponse(
-                200,
-                req.user,
-                "User Details",
-                true
-            )
-        )
-    }
-
-    return res .status(200)
+    return res.status(200)
     .json(
         new ApiResponse(
             200,
-            {},
-            "User not found something went wrong",
+            user ? user : "user not found" ,
+            "User found ",
             true
         )
     )
@@ -453,14 +443,20 @@ const getCurrentUser = asyncHandler( async(
 }) 
 
 
-// const test = asyncHandler(async(req,res)=>{
-//     const file =  req.file
-//     // console.log(file)
-//     const data =  fileUpload(file.path)
-//     console.log(data);
-// })
-// // to do 
-// // when getting user profile enter almost product
+const test = asyncHandler(async(req,res)=>{
+    const file =  req.file
+    console.log(req.file);
+
+    // if(file?.path){
+
+    //     uploadToS3(file?.path)
+    // }else{
+    //     console.log("not uploaded ");
+    // }
+    
+  
+})
+
 
 
 
@@ -473,11 +469,10 @@ export {
   refreshToken,
   chageCurrentPassword,
   getCurrentUser,
-//   updateProfileImage,   // const data =  fileUpload(file)
-  // console.log(data);
+  updateProfileImage,   
   updateAccountDetails,
   forgetPassword,
-//   resetPassword,
-//   test
+  resetPassword,
+  test
 
    }

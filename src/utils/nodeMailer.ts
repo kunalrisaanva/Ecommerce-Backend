@@ -8,7 +8,6 @@ export const mailSender = (userEmail:string , message:string ) => {
 
         // Create a Nodemailer transporter
 
-       
         const transporter = nodemailer.createTransport({
             host: 'smtp.example.com',
             port: 587, 
@@ -24,8 +23,8 @@ export const mailSender = (userEmail:string , message:string ) => {
         const mailOptions = {
             // from: 'yourusername@example.com', // Sender address
             to: userEmail,
-            subject: 'Test Email', // Subject line
-            text: 'This is a test email sent from Node.js using Nodemailer.' // Plain text body
+            subject: 'Test Email', 
+            text: message 
         };
 
 

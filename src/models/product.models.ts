@@ -25,7 +25,8 @@ const productSchema = new Schema( {
 
     stock:{
         type:Number,
-        required:true
+        default:0,
+        required:[true,"stock is required "]
     },
 
     category:{
@@ -35,7 +36,7 @@ const productSchema = new Schema( {
     },
 
     owner:{
-        type:Types.ObjectId ,
+        type:mongoose.Types.ObjectId,
         ref:"User",
         required:true
     },

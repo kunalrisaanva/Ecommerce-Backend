@@ -4,14 +4,15 @@ import jwt from 'jsonwebtoken'
 import crypto from "crypto";
 
 
-interface IUser extends Document {
-    
+export interface IUser extends Document {
+    _id?:Schema.Types.ObjectId;
     username:string;
     lastName:string;
     email:string;
     password:string;
     userImage?:string;
     gender?:string;
+    role?:string;
     refreshToken?:string;
     resetPasswordToken?:string,
     resetPasswordExpire?:string,
@@ -35,6 +36,7 @@ const userSchema: Schema<IUser> = new Schema(
 
         lastName:{
             type:String,
+            trim:true,
             default:""
         },
 
@@ -62,6 +64,12 @@ const userSchema: Schema<IUser> = new Schema(
            required:[true, "Gender is Required"]
         },
 
+        role:{
+            type:String,
+            enum:["user","admin"],
+            default:"user"
+        },
+
         refreshToken: {
             type: String,
         },
@@ -85,6 +93,8 @@ userSchema.methods.comparePassword = async function (password:string): Promise<b
     return await bcrypt.compare(password,this.password)
 }
 
+
+// if needs fullName 
 userSchema.virtual("fullName").get(function(): string {
        return this.username +' '+ this.lastName
 })

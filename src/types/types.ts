@@ -1,11 +1,15 @@
 import {Request , Response , NextFunction} from "express"
+import { Schema } from "mongoose";
+
+
 
 export interface NewUserRequestBody {
+    // _id?:Schema.Types.ObjectId;
     username: string;
     lastName: string;
     email: string;
     password: string;
-    gender:"male" | "female" | "other "
+    gender?:"male" | "female" | "other "
 }
 
 export type ControllerType = (
@@ -21,6 +25,16 @@ export interface LoginRequestBody {
     password:string;
 }    
 
+
+export interface ProductRequestBody {
+    name:string; 
+    description:string; 
+    productImage:string;
+    category:string;
+    price:number;
+    stock:number; 
+    owner:Schema.Types.ObjectId
+}
 
 export interface CustomRequest extends Request  {
    

@@ -1,16 +1,18 @@
-import { User } from "../models/user.models.js";
+import { IUser, User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Request , Response , NextFunction } from "express"
 import jwt , { JwtPayload } from "jsonwebtoken";
 import { IncomingHttpHeaders } from "http";
+import { Schema } from "mongoose";
 
-interface CustomRequest extends Request {
-  user?:object
+
+export interface IRequest extends Request {
+  userId?: Schema.Types.ObjectId;
 }
 
 
-const verifyJwt =  async(req:CustomRequest,res:Response,next:NextFunction) => {
+const verifyJwt =  async(req:IRequest,res:Response,next:NextFunction) => {
 
     try {
  
@@ -22,13 +24,14 @@ const verifyJwt =  async(req:CustomRequest,res:Response,next:NextFunction) => {
   
       const decodeToken  = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET_KEY! ) as JwtPayload
       
-      const user =  await User.findById(decodeToken?._id).select('-password -refreshToken ' );
+      const user:IUser =  await User.findById(decodeToken?._id).select('-password -refreshToken ' );
       
       if(!user){
           throw new ApiError(401,"Invalid AccessToken");
       }
   
-      req.user = user;
+      req.userId = user._id; 
+      
       next()
     } catch (error:any) {
       throw new ApiError(401,error?.message || "Invlid access token ")
