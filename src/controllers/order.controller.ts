@@ -13,6 +13,19 @@ const getAllOrder = asyncHandler(async (req,res)=> {
 
 })
 
+const myOrder = asyncHandler( async( req,res) => {
+    //ToDo: get order indivisualy 
+
+})
+
+
+const getSingleOrder = asyncHandler( async(req,res) => {
+    //Todo: get single order 
+
+
+});
+
+
 
 
 

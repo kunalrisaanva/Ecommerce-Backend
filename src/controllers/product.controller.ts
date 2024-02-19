@@ -9,6 +9,9 @@ import mongoose, { ObjectId, Schema } from 'mongoose';
 import { CustomRequest } from '../types/types.js';
 import { IRequest } from '../middlewares/auth.middleware.js';
 import { cloudinaryUploader } from '../utils/cloudinary.js';
+import { nodeCache } from '../app.js';
+
+
 
 
 const addProduct = asyncHandler( async (
@@ -20,7 +23,7 @@ const addProduct = asyncHandler( async (
 
     const { name, description , productImage, category, price, stock,  } = req.body;
 
-
+    
 
 
     // url clodinary add it later 
@@ -32,7 +35,6 @@ const addProduct = asyncHandler( async (
             category:"",
             price,
             stock,
-            // owner: req.userId ? new mongoose.Types.ObjectId(req.userId) : ""
             owner:req.userId ? req.userId : ""
         })
     
@@ -48,34 +50,63 @@ const addProduct = asyncHandler( async (
 const getSingleProduct = asyncHandler( async (req,res) => {
     // TO Do: get single product details 
 
-    const { id } = req.params;
+    const { productId } = req.params;
 
-    const singleProducuct = await Product.findById(id).select("")
+    const singleProducuct = await Product.findById(productId).select("")
     
 
 
 
     return res
+    .status(200)
+    .json(
+        new ApiResponse(200,singleProducuct,"product")
+    )
         
 })
 
 
 const getAdminProducts = asyncHandler( async (req,res) => {
-    // TO Do: update single product details 
+    // TO Do: get products created by admin  
+
+
     
 })
 
 
 const updateProduct = asyncHandler( async (req,res) => {
     // TO Do: update single product details 
-    const { product_id } = req.params
+    const { productId } = req.params
+    
+
+    const {name , description , productImage ,stock , } = req.body
+
+
+    const updatedProduct = await Product.findByIdAndUpdate()
+
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200,{},"letest product list"))
+
     
 })
 
 
 const deleteProductAdmin = asyncHandler( async (req,res) => {
     // TO Do: delete product 
-    const {product_id} = req.params
+    const {productId} = req.params
+    
+    const product = await Product.findById(productId);
+
+    if(!product) throw new ApiError(404,"there is no products found with giveen id");
+
+
+    await Product.findByIdAndDelete(productId);
+    
+    return res
+    .status(200)
+    .json( new ApiResponse(200,{}," product deleted "))
     
 })
 
@@ -95,9 +126,43 @@ const getAllProducts = asyncHandler( async (req,res) => {
     // TO Do: get all products 
     // 2.44
     // node cache 3.12
+    const products = await Product.find();
+
+    const chacheProduct =  nodeCache.set("products",products)
+
+    
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200,chacheProduct,"product list Fetched"))
+
     
 })
 
+
+const serachProduct = asyncHandler( async(req,res) => {
+    //Todo: get product by search 
+
+    const { searchTerm } = req.query
+    const searchedProduct = await Product.find(
+        {
+            $or:[
+                { name: { $regex:searchTerm}},
+                { description:{ $regex:searchTerm}}
+            ]
+
+            
+        }
+    );
+
+    if(!searchedProduct) throw new ApiError(404,"item not found");
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,searchedProduct,"here is the product you have searched")
+    )
+})
 
 
 
@@ -105,7 +170,14 @@ const getAllProducts = asyncHandler( async (req,res) => {
 // genreate product 3.05
 
 export {
-   addProduct
+   addProduct,
+   getSingleProduct,
+   getAllProducts,
+   getAdminProducts,
+   deleteProductAdmin,
+   getLetestProduct,
+   updateProduct,
+   serachProduct
 }
 
 

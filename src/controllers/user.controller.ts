@@ -152,12 +152,12 @@ const logInUser = asyncHandler(async (
 
 
 const logOutUser = asyncHandler(async (
-    req:CustomRequest,
+    req:IRequest,
     res:Response,
     next:NextFunction
     ) => {
     await User.findByIdAndUpdate(
-        req.user?._id,
+        req.userId,
         {
             $unset: {
                 refreshToken: 1,
