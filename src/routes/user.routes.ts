@@ -14,7 +14,7 @@ import {
  } from "../controllers/user.controller.js"
 
 import { upload } from "../middlewares/multer.middleware.js"
-import { uploadToS3 } from "../middlewares/S3Upload.middleware.js"   //ToDo: upload image into s3 buket 
+import { uploadToS3 } from "../middlewares/S3Upload.middleware.js"   //ToDo: upload image into s3 buket cover it later
 import { verifyJwt as verifyRoute } from '../middlewares/auth.middleware.js'
 
 const router = Router();

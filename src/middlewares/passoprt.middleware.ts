@@ -1,47 +1,44 @@
-// const LocalStrategy = require('passport-local').Strategy;
-// const session = require('express-session');
+// const GoogleStrategy = require("passport-google-oauth20").Strategy;
+// const passport = require("passport");
+
+// import { Strategy as GoogleStrategy , StrategyOptions } from "passport-google-oauth2"
+import { Strategy as GoogleStrategy , StrategyOptions } from 'passport-google-oauth20';
+
+// import passport from "passport";
 
 
 
+const configureGoogleStrategy = async(passport:any) => {
+ console.log("object");
+const googleStrategyOptions: StrategyOptions = {
+    clientID: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    callbackURL: 'http://localhost:7000/google/callback', // Adjust the callback URL as per your application setup
+	scope:["email","profile"],
+  };
+console.log("2");
+passport.use(
+	new GoogleStrategy(
+		googleStrategyOptions,
+        async function (accessToken:string, refreshToken:string, profile:any, callback:any) {
+			console.log('Profile Data')
+			console.log(profile)
+			callback(null, profile);
+		}
+	)
+);
 
-// // Passport Local Strategy for username/password authentication
-// passport.use(new LocalStrategy(
-//     function (username, password, done) {
-//         // Find user by username
-//         const user = users.find(user => user.username === username);
-//         if (!user) {
-//             return done(null, false, { message: 'Incorrect username.' });
-//         }
-//         // Validate password
-//         if (user.password !== password) {
-//             return done(null, false, { message: 'Incorrect password.' });
-//         }
-//         // Authentication succeeded
-//         return done(null, user);
-//     }
-// ));
+passport.serializeUser((user:any, done:any) => {
+	done(null, user);
+});
 
-
-// // Serialize user to store in session
-// passport.serializeUser(function (user, done) {
-//     done(null, user.id);
-// });
-
-// // Deserialize user from session
-// passport.deserializeUser(function (id, done) {
-//     const user = users.find(user => user.id === id);
-//     done(null, user);
-// });
-
-
-// // Middleware to check if user is authenticated
-// function isAuthenticated(req, res, next) {
-//     if (req.isAuthenticated()) {
-//         return next();
-//     }
-//     res.redirect('/login');
-// }
+passport.deserializeUser((user:any, done:any) => {
+	done(null, user);
+});
+}
 
 
 
-// export { isAuthenticated }
+export {
+	configureGoogleStrategy
+}

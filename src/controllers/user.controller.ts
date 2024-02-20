@@ -230,7 +230,7 @@ const refreshToken = asyncHandler(async (req, res) => {
 
 
 const chageCurrentPassword = asyncHandler( async(
-    req:CustomRequest,
+    req:IRequest,
     res:Response
     )=>{
   
@@ -244,7 +244,7 @@ const chageCurrentPassword = asyncHandler( async(
 
     }
 
-    const user = await User.findByIdAndUpdate(req.user?._id,{
+    const user = await User.findByIdAndUpdate(req.userId,{
         $set:{
         password:newPassword
         }
@@ -343,7 +343,7 @@ const resetPassword = asyncHandler( async(req,res)=>{
 
 
 const updateAccountDetails = asyncHandler( async(
-    req:CustomRequest,
+    req:IRequest,
     res:Response
     )=> {
 
@@ -355,7 +355,7 @@ const updateAccountDetails = asyncHandler( async(
       throw new ApiError(400," Fields Should be not empty");
     }
    
-    const updatedUser = await User.findByIdAndUpdate(req.user?._id,
+    const updatedUser = await User.findByIdAndUpdate(req.userId,
       {
         $set:{
             username,
@@ -375,7 +375,7 @@ const updateAccountDetails = asyncHandler( async(
 
 
 
-const updateProfileImage = asyncHandler(async (req:CustomRequest, res) => {
+const updateProfileImage = asyncHandler(async (req:IRequest, res) => {
 
     let userImage
 
@@ -397,7 +397,7 @@ const updateProfileImage = asyncHandler(async (req:CustomRequest, res) => {
      // .then(console.log);}
 
 
-    const user = await User.findByIdAndUpdate(req.user?._id, {
+    const user = await User.findByIdAndUpdate(req.userId, {
         $set: {
             userImage: response? response.url : '',
         },
