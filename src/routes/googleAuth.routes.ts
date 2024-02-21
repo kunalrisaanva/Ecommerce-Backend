@@ -1,6 +1,6 @@
 import {Router} from "express"
 import passport from "passport"
-// import {async}
+
 import { Request, Response} from "express";
 
 const router = Router();
@@ -29,7 +29,7 @@ router.get("/google", passport.authenticate('google', { scope:
 }));
 
 router.get("/google/callback", passport.authenticate("google", {
-	successRedirect: "/login/success",
+	successRedirect: process.env.CLIENT_URL,
 	failureRedirect: "/login/failed",
   }));
 
@@ -37,5 +37,6 @@ router.get("/logout", (req, res) => {
 	// req.logout();
 	// res.redirect(process.env.CLIENT_URL!);
 });
+
 
 export default router

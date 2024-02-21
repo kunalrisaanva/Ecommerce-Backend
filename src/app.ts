@@ -4,7 +4,9 @@ import passport from "passport"
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session"
 import NodeCache from "node-cache";
+import session from 'express-session';
 import {configureGoogleStrategy} from './middlewares/passoprt.middleware.js';
+
 
 const app = express();
 
@@ -17,23 +19,28 @@ app.use(cors({
 
 // Middleware for session management
 
-app.use(cookieSession({
-    name:"session",
-    keys:["sessionKey"],
-    maxAge:24*60*60*100
-}))
+// app.use(cookieSession({
+//     name:"session",
+//     keys:["sessionKey"],
+//     maxAge:24*60*60*100
+// }))
 
-
-
-app.use(express.json({limit:"64kb"}));
-app.use(express.urlencoded({extended:true , limit:"16kb"}));
-app.use(express.static("public"));
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false
+}));
 
 
 // Initialize Passport and session
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(express.json({limit:"64kb"}));
+app.use(express.urlencoded({extended:true , limit:"16kb"}));
+app.use(express.static("public"));
+
 
 
 // Configure Google OAuth Strategy

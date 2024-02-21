@@ -134,7 +134,7 @@ const getAllProducts = asyncHandler( async (req,res) => {
 
     return res
     .status(200)
-    .json( new ApiResponse(200,chacheProduct,"product list Fetched"))
+    .json( new ApiResponse(200,products ? products : chacheProduct ,"product list Fetched"))
 
     
 })
