@@ -5,7 +5,7 @@ import { Request, Response} from "express";
 
 const router = Router();
 
-router.get("/login/success", (req, res) => {
+router.get("/login/success", async(req, res) => {
 	if (req.user) {
 		res.status(200).json({
 			error: false,
@@ -17,7 +17,7 @@ router.get("/login/success", (req, res) => {
 	}
 });
 
-router.get("/login/failed", (req, res) => {
+router.get("/login/failed", async(req, res) => {
 	res.status(401).json({
 		error: true,
 		message: "Log in failure",
@@ -33,9 +33,9 @@ router.get("/google/callback", passport.authenticate("google", {
 	failureRedirect: "/login/failed",
   }));
 
-router.get("/logout", (req, res) => {
-	// req.logout();
-	// res.redirect(process.env.CLIENT_URL!);
+router.get("/logout", (req, res ,next) => {
+	// req.logout(next(do));
+	// res.redirect("http:localhost:7000/home-page");
 });
 
 

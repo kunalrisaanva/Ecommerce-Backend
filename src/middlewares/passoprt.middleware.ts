@@ -1,5 +1,5 @@
 import { Strategy as GoogleStrategy , StrategyOptions } from 'passport-google-oauth20';
-
+import { User } from '../models/user.models.js';
 
 const configureGoogleStrategy = async(passport:any) => {
 

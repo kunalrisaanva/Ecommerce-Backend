@@ -44,3 +44,12 @@ export interface CustomRequest extends Request  {
     
 }
 
+
+export type SearchRequestQuery = {
+        search?:string;
+        price?:number;
+        category?:string;
+        sort?:string;
+        page?:string;
+        description?:string;
+}

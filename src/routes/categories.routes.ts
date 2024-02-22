@@ -1,12 +1,23 @@
 import express from "express";
-import {} from "../controllers/categories.js";
+import {
+addCategory,
+getAllCategories,
+editCategory,
+deleteCategory
+} from "../controllers/categories.js";
 
+import { verifyJwt } from "../middlewares/auth.middleware.js"
+import { isAdmin }  from "../middlewares/admin.middleware.js"
 
 
 
 const router = express.Router()
 
-router.route("/")
+router.route("/add-category").post();
+router.route("/get-all-category").get();
+router.route("/edit-category/:categoryId").patch();
+router.route("/delete-category").delete();
+
 
 
 
