@@ -37,14 +37,22 @@ const getAllCategories = asyncHandler(async (req,res)=> {
 
 })
 
+
 const  addCategory = asyncHandler( async(req,res) => {
 
     // Todo: add category oonly admin 
 
+    const { name } = req.body
+
+    const createdCategory = await Category.create({
+        name
+    })
+
+
     return res
     .status(200)
     .json(
-        new ApiResponse(200,{},"all categories Fached successfully") 
+        new ApiResponse(200,createdCategory, " categegory is successfully created ") 
     )
 
 })
@@ -54,21 +62,32 @@ const  addCategory = asyncHandler( async(req,res) => {
 const editCategory = asyncHandler( async(req,res) => {
  // Todo: edite category oonly admin 
 
+    const categoryId = req.params
+    const name = req.body
+    const category = await Category.findByIdAndUpdate({_id:categoryId},{
+        $set:{
+            name
+        }
+    },{new:true})
+
     return res
     .status(200)
     .json(
-        new ApiResponse(200,{},"all categories Fached successfully") 
+        new ApiResponse(200,category,"updated category successfully") 
     )
 })
 
 
 const deleteCategory = asyncHandler( async(req,res) => {
  // Todo: delete category oonly admin 
+  const categoryId = req.params
+
+  const deleteCategory = await Category.findByIdAndDelete(categoryId)
 
  return res
  .status(200)
  .json(
-    new ApiResponse(200,{},"all categories Fached successfully") 
+    new ApiResponse(200,{}," categories is deleted successfully") 
  )
 })
 

@@ -11,11 +11,27 @@ const getAllOrder = asyncHandler(async (req,res)=> {
 
     //ToDo:get all order 
 
+    const order = await Order.find();
+    
+    
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,{},"order is feched ")
+    )
+
+
 })
 
-const myOrder = asyncHandler( async( req,res) => {
+
+const getMyOrder = asyncHandler( async( req,res) => {
     //ToDo: get order indivisualy 
 
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,{},"order is feched ")
+    )
 })
 
 
@@ -23,6 +39,11 @@ const getSingleOrder = asyncHandler( async(req,res) => {
     //Todo: get single order 
 
 
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,{},"order is feched ")
+    )
 });
 
 
@@ -31,5 +52,7 @@ const getSingleOrder = asyncHandler( async(req,res) => {
 
 
 export {
-
+    getAllOrder,
+    getMyOrder,
+    getSingleOrder
 }

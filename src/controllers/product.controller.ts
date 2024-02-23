@@ -13,7 +13,6 @@ import { nodeCache } from '../app.js';
 
 
 
-
 const addProduct = asyncHandler( async (
     req:IRequest,
     res:Response,
@@ -129,6 +128,22 @@ const updateProduct = asyncHandler( async (req,res) => {
 })
 
 
+const updateProductImage = asyncHandler( async(req,res) => {
+    //Todo: update product image
+
+
+
+    const productImage = req.file
+    console.log(productImage);
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200,{},"letest product list"))
+    
+})
+
+
+
 const deleteProductAdmin = asyncHandler( async (req,res) => {
     // TO Do: delete product 
     const {productId} = req.params
@@ -147,6 +162,7 @@ const deleteProductAdmin = asyncHandler( async (req,res) => {
     .json( new ApiResponse(200,{}," product deleted "))
     
 })
+
 
 
 const getLetestProduct = asyncHandler( async (req,res) => {
@@ -172,6 +188,7 @@ const getLetestProduct = asyncHandler( async (req,res) => {
     .status(200)
     .json( new ApiResponse(200,products,"letest product list"))
 })
+
 
 
 const getAllProducts = asyncHandler( async (req,res) => {

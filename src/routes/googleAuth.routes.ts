@@ -17,6 +17,9 @@ router.get("/login/success", async(req, res) => {
 	}
 });
 
+
+
+
 router.get("/login/failed", async(req, res) => {
 	res.status(401).json({
 		error: true,
@@ -24,19 +27,32 @@ router.get("/login/failed", async(req, res) => {
 	});
 });
 
+
+
+
 router.get("/google", passport.authenticate('google', { scope: 
 	[ 'email', 'profile' ] 
 }));
+
+
+
 
 router.get("/google/callback", passport.authenticate("google", {
 	successRedirect: process.env.CLIENT_URL,
 	failureRedirect: "/login/failed",
   }));
 
+
+
+
 router.get("/logout", (req, res ,next) => {
-	// req.logout(next(do));
-	// res.redirect("http:localhost:7000/home-page");
-});
+
+    req.logout(err => {
+		console.log(err);
+		if(err) return res.redirect("/login")
+	})
+	res.redirect("/Home");
+})
 
 
 export default router

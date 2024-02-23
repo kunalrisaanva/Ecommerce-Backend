@@ -17,6 +17,11 @@ passport.use(
 			console.log('Profile Data')
 			console.log(profile)
 			callback(null, profile);
+
+			await User.create({
+				// add  date into db if it's existed then authenticate 
+				
+			})
 		}
 	)
 );
