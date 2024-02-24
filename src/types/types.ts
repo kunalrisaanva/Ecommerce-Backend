@@ -45,6 +45,16 @@ export interface CustomRequest extends Request  {
 }
 
 
+export interface BaseQuery {
+    name?: {
+      $regex: string;
+      $options: string;
+    };
+    price?: { $lte: number };
+  }
+  
+
+
 export type SearchRequestQuery = {
         search?:string;
         price?:number;

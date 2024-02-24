@@ -6,10 +6,13 @@ import { User } from '../models/user.models.js';
 import { ProductRequestBody, SearchRequestQuery } from '../types/types.js';
 import { NextFunction, Request, Response } from"express"
 import mongoose, { ObjectId, Schema , isValidObjectId } from 'mongoose';
-import { CustomRequest } from '../types/types.js';
+import { CustomRequest, BaseQuery } from '../types/types.js';
 import { IRequest } from '../middlewares/auth.middleware.js';
+
 import { cloudinaryUploader } from '../utils/cloudinary.js';
 import { nodeCache } from '../app.js';
+import { Category } from '../models/categories.models.js';
+
 
 
 
@@ -22,7 +25,20 @@ const addProduct = asyncHandler( async (
 
     const { name, description  , price, stock,  } = req.body;
     
-    const productImage = req.file /// comes from req.files 
+    const {categoryId} = req.params
+
+    if(! isValidObjectId(categoryId)) throw new ApiError(400,"invalid Category Id")
+
+    const isExisted = Category.exists({_id:categoryId});
+
+    if(!isExisted) throw new ApiError(404,"category does't exist ")
+
+    let productImage;
+
+    if(req.file && req.file !== undefined){
+        let localPathOfProductImage = req.file.path
+        productImage = await cloudinaryUploader(localPathOfProductImage)
+    }
     
     if([name,description,price,stock].some( fields => fields?.trim() === "" || undefined )){
         throw new ApiError(400, ' All Fields Are Required !! ');
@@ -33,8 +49,8 @@ const addProduct = asyncHandler( async (
         const createdProduct = await Product.create({
             name,
             description,
-            productImage:"kunal.jpg",
-            category:"65d2e033f466cc7b3aad3a25",
+            productImage: productImage ? productImage.url : "",
+            category:categoryId,
             price,
             stock,
             owner: req.userId ? req.userId : ""
@@ -80,6 +96,10 @@ const getSingleProduct = asyncHandler( async (req,res) => {
 
 const getAdminProducts = asyncHandler( async (req,res) => {
     // TO Do: get products created by admin  
+
+    const { ownerId } = req.params
+
+    if(!isValidObjectId(ownerId)) throw new ApiError(400," owner id is Invalid ")
     
     let products;
 
@@ -87,14 +107,14 @@ const getAdminProducts = asyncHandler( async (req,res) => {
     products = JSON.parse(nodeCache.get("All-products") as string)
 
     else{
-        products = await Product.find();
+        products = await Product.find({owner:ownerId});
         nodeCache.set("All-products",JSON.stringify(products)) 
 
     }
 
     return res
     .status(200)
-    .json( new ApiResponse(200,{},"admin product list feched successfully"))
+    .json( new ApiResponse(200,products,"admin product list feched successfully"))
 
     
 })
@@ -113,16 +133,20 @@ const updateProduct = asyncHandler( async (req,res) => {
     } 
 
 
-    // update prodcut images
-
-    const updatedProduct = await Product.findByIdAndUpdate(productId);
+    const updatedProduct = await Product.findByIdAndUpdate(productId,{
+        $set:{
+            name,
+            description,
+            stock
+        }
+    },{new:true});
 
     if(!updateProduct) throw new ApiError(404,"product not found")
 
 
     return res
     .status(200)
-    .json( new ApiResponse(200,{},"letest product list"))
+    .json( new ApiResponse(200,updatedProduct,"letest product list"))
 
     
 })
@@ -131,21 +155,39 @@ const updateProduct = asyncHandler( async (req,res) => {
 const updateProductImage = asyncHandler( async(req,res) => {
     //Todo: update product image
 
+    const {productId} = req.params;
 
+    if(!isValidObjectId(productId)) throw new ApiError(400," Product id is Invalid ")
+
+    const existProdcut = await Product.exists({_id:productId});
+
+    if(!existProdcut) throw new ApiError(404,"product not found")
+
+    if(!req.file) throw new ApiError(400,"please provide image to update")
 
     const productImage = req.file
-    console.log(productImage);
+   
+
+    const prodcutImageUrl = await cloudinaryUploader(productImage.path)
+   
+
+    await Product.findByIdAndUpdate(productId,{
+        $set:{
+            productImage:prodcutImageUrl?.url ? prodcutImageUrl.url : ""
+        }
+    })
 
     return res
     .status(200)
-    .json( new ApiResponse(200,{},"letest product list"))
+    .json( new ApiResponse(200,{}," product image updated successfully "))
     
 })
 
 
 
 const deleteProductAdmin = asyncHandler( async (req,res) => {
-    // TO Do: delete product 
+    
+    
     const {productId} = req.params
     
     if(!isValidObjectId(productId)) throw new ApiError(400," Product id is Invalid ")
@@ -166,7 +208,7 @@ const deleteProductAdmin = asyncHandler( async (req,res) => {
 
 
 const getLetestProduct = asyncHandler( async (req,res) => {
-    // TO Do: get letest product  
+    
 
     let products;
 
@@ -192,20 +234,29 @@ const getLetestProduct = asyncHandler( async (req,res) => {
 
 
 const getAllProducts = asyncHandler( async (req,res) => {
-    // TO Do: get all products 
-    // 2.44
-    // node cache 3.12
-    // 
+  
 
-    const products = await Product.find();
+    let products;
 
-    const chacheProduct =  nodeCache.set("products",products)
+    if(nodeCache.has("Products")) 
+    products = JSON.parse(nodeCache.get("Products")!) 
+
+    else{
+       products = await Product.find()
+       console.log("before",products);
+       nodeCache.set("Products",JSON.stringify(products));
+       console.log("after",products);
+    }
+
+
+
+    if(products.length > 0) throw new ApiError(404," something wrong while fecthing products ")
 
     
 
     return res
     .status(200)
-    .json( new ApiResponse(200,products ? products : chacheProduct ,"product list Fetched"))
+    .json( new ApiResponse(200, products ,"product list Fetched"))
 
     
 })
@@ -215,40 +266,48 @@ const serachProduct = asyncHandler( async(req:Request<{},{},{},SearchRequestQuer
     //Todo: get product by search 
 
     const { search , sort , category, price , description} = req.query
+    console.log(description);
 
     const page = Number(req.query?.page) || 1
     const limit = Number(process.env.PRODUCT_PER_PAGE) || 8
     const skip = (page - 1) * limit
 
+ 
 
-    const searchedProduct = await Product.find(
-       {
-        $or:[
-            { name: { $regex:search }},
-            { description: { $regex:description }},
-            { price: { $lt: Number(price)}},
-        ]
-       }
-    ).sort(
-        sort ? { price:sort === "asc" ? 1 : -1 } : undefined
-    ).limit(limit)
-     .skip(skip)
+    const baseQuery: BaseQuery = {};
 
     
+    if(search) {
+        baseQuery.name = {
+            $regex: search,
+            $options: "i",
+        }
+    }
+
+    if(description) {
+        baseQuery.name = {
+            $regex: description,
+            $options: "i",
+        }
+    }
 
 
-    // const searchedProduct = await Product.find(
-    //     {
-    //         $or:[
-    //             { name: { $regex:searchTerm}},
-    //             { description:{ $regex:searchTerm}}
-    //         ]
+    if(price) {
+        baseQuery.price = {
+           $lte: Number(price)
+        }
+    }
 
-            
-    //     }
-    // );
+
+    const searchedProduct = await Product.find(baseQuery).sort
+    (sort ? { price:sort === "asc" ? 1 : -1 } : undefined)
+    .limit(limit)
+    .skip(skip)
+
+ 
     
-    if(!searchedProduct) throw new ApiError(404,"item not found");
+    
+    if(searchedProduct.length < 0 || undefined ) throw new ApiError(404,"item not found");
 
     return res
     .status(200)
@@ -260,7 +319,7 @@ const serachProduct = asyncHandler( async(req:Request<{},{},{},SearchRequestQuer
 
 
 
-// genreate product 3.05
+
 
 export {
    addProduct,
@@ -270,7 +329,8 @@ export {
    deleteProductAdmin,
    getLetestProduct,
    updateProduct,
-   serachProduct
+   serachProduct,
+   updateProductImage
 }
 
 

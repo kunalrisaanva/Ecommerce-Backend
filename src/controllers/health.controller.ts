@@ -5,7 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 
 const healthCheck = asyncHandler( async (req,res,next) => {
-    //ToDo: simple server health check api which is return ok  
+    //ToDo: simple server health check api which is return ok in json
     return res
     .status(200)
     .json(

@@ -7,7 +7,8 @@ import {
     getSingleProduct,
     serachProduct,
     updateProduct,
-    deleteProductAdmin
+    deleteProductAdmin,
+    updateProductImage
 } from "../controllers/product.controller.js";
 
 import { upload } from "../middlewares/multer.middleware.js"
@@ -20,17 +21,19 @@ const router = express.Router()
 
 // router.use(verifyJwt)
 
-router.route("/add-product").post(upload.single("productImage"),verifyJwt,addProduct);
+router.route("/add-product").post(upload.single("productImage"),addProduct);
 
 router.route("/all-products").get(getAllProducts);
 
-router.route("/get-admin-products").get(getAdminProducts);
+router.route("/get-admin-products/:ownerId").get(getAdminProducts);
 
-router.route("/get-single-products").get(getSingleProduct);
+router.route("/get-single-products/:productId").get(getSingleProduct);
 
 router.route("/get-letest-products").get(getLetestProduct);
 
 router.route("/search-products").get(serachProduct);
+
+router.route("/update-product-image/:productId").patch(upload.single("prodcutImage"), updateProductImage);
 
 router.route("/:productId").patch(updateProduct).delete(deleteProductAdmin); // update and delete route 
 
