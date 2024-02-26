@@ -1,5 +1,7 @@
+import { ExistingObjectReplicationStatus } from "@aws-sdk/client-s3";
+import { NumberLengthBetween12And19 } from "aws-sdk/clients/paymentcryptographydata.js";
 import {Request , Response , NextFunction} from "express"
-import { Schema } from "mongoose";
+import { ObjectId, Schema } from "mongoose";
 
 
 
@@ -63,3 +65,16 @@ export type SearchRequestQuery = {
         page?:string;
         description?:string;
 }
+
+// export type OrderItemType = {
+//     productId:string;
+//     quantity:number
+// }
+
+// export interface NewOrderRequestBody {
+//     orderPrice:number;
+//     customer:string;
+//     orderItem: OrderItemType[] ;
+//     address:string;
+//     status:'PENDING'| "CANCELED" | 'DELIVERD'
+// }

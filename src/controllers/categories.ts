@@ -99,6 +99,8 @@ const deleteCategory = asyncHandler( async(req,res) => {
         )
 })
 
+
+
 const searchCategory = asyncHandler( async(req,res) => {
 
 

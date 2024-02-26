@@ -307,7 +307,7 @@ const serachProduct = asyncHandler( async(req:Request<{},{},{},SearchRequestQuer
  
     
     
-    if(searchedProduct.length < 0 || undefined ) throw new ApiError(404,"item not found");
+    if(searchedProduct.length <= 0 || undefined ) throw new ApiError(404,"item not found");
 
     return res
     .status(200)

@@ -10,5 +10,4 @@ const asyncHandler = (passedFuntion:ControllerType) => (req:Request,res:Response
 
 
 
-
 export { asyncHandler }
