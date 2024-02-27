@@ -6,7 +6,7 @@ import { User } from '../models/user.models.js';
 import { ProductRequestBody, SearchRequestQuery } from '../types/types.js';
 import { NextFunction, Request, Response } from"express"
 import mongoose, { ObjectId, Schema , isValidObjectId } from 'mongoose';
-import { CustomRequest, BaseQuery } from '../types/types.js';
+import { BaseQuery } from '../types/types.js';
 import { IRequest } from '../middlewares/auth.middleware.js';
 
 import { cloudinaryUploader } from '../utils/cloudinary.js';

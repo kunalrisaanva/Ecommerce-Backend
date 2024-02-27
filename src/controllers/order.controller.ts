@@ -6,7 +6,7 @@ import { Product } from "../models/product.models.js";
 import { isValidObjectId } from 'mongoose';
 import { Order } from '../models/order.models.js';
 import { Request, Response } from 'express';
-
+import { nodeCache } from '../app.js';
 
 
 
@@ -47,16 +47,26 @@ const getAllOrder = asyncHandler(async (req,res)=> {
 
     //ToDo:get all order 
 
-    const order = await Order.find();
+    
+    let orders
+
+    if(nodeCache.has("All-orders"))
+   orders = JSON.parse(nodeCache.get("All-orders") as string)
+
+   else{
+       orders = await Order.find();
+       nodeCache.set("All-order",JSON.stringify(orders)) 
+
+   }
 
 
-    if(!order) throw new ApiError(404,"order not found")
+    if(!orders) throw new ApiError(404,"order not found")
     
     
     return res
     .status(200)
     .json(
-        new ApiResponse(200,order,"order is feched ")
+        new ApiResponse(200,orders,"order is feched ")
     )
 
 
@@ -67,6 +77,7 @@ const getAllOrder = asyncHandler(async (req,res)=> {
 const getSingleOrder = asyncHandler( async(req,res) => {
     //Todo: get single order 
 
+
     const { orderId } = req.params
 
     if(!isValidObjectId(orderId)) throw new ApiError(400," order id is Invalid ")
@@ -75,10 +86,18 @@ const getSingleOrder = asyncHandler( async(req,res) => {
 
     if(!isExistedOrder) throw new ApiError(404,"product not found");
 
-    const order = await Order.findById(orderId)
+    let order
+
+     if(nodeCache.has("All-order"))
+    order = JSON.parse(nodeCache.get("All-order") as string)
+
+    else{
+        order = await Order.find({_id:orderId});
+        nodeCache.set("All-order",JSON.stringify(order)) 
+
+    }
 
     if(!order) throw new ApiError(404,'order not found')
-
 
     return res
     .status(200)
