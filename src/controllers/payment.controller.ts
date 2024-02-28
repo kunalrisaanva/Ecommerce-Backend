@@ -1,10 +1,16 @@
 import Razorpay  from "razorpay"
 import { Request,Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import {fileURLToPath} from "url"
+import path from "path"
 import axios from "axios";
 import { ApiError } from "../utils/ApiError.js";
-import router from "../routes/user.routes.js";
-// import {create} from "../../public"
+
+
+
+const __filename = fileURLToPath(import.meta.url);
+const htmlFilePath = path.join(path.dirname(__filename), '../../public/index.html');
+
 
 
 const razorpayInstance = new Razorpay({
@@ -13,19 +19,19 @@ const razorpayInstance = new Razorpay({
 });
 
 
-// declare module 'razorpay' {
-//     interface Razorpay {
-//         on(event: string, handler: Function): void;
-//     }
-// } 
+
+const renderHtmlFile = asyncHandler( async(req,res) => {
+
+    res.sendFile(htmlFilePath)
+
+})
 
 
-
-const createOrder = async(req:Request,res:Response)=>{
+const createOrder = asyncHandler(async(req:Request,res:Response)=>{
     try {
-        const amount = req.body.amount*100 || 5000
+        const amount = req.body.amount*100
         const options = {
-            amount: 1000,
+            amount: 1000,// giving staticly 
             currency: 'INR',
             receipt: 'razorUser@gmail.com'
         }
@@ -36,7 +42,7 @@ const createOrder = async(req:Request,res:Response)=>{
                         success:true,
                         msg:'Order Created',
                         order_id:order.id,
-                        amount:1000,
+                        amount:1000, // giving staticly 
                         key_id:process.env.RAZORPAY_KEY_ID!,
                         product_name:"tshirt",
                         description:"nike tshirt descriptioin",
@@ -54,57 +60,9 @@ const createOrder = async(req:Request,res:Response)=>{
     } catch (error:any) {
         console.log(error.message);
     }
-}
-
-
-
-
-const checkOut = asyncHandler( async(req,res) => {
-
-    try {
-    
-        const response = await ((await axios.post("http://localhost:7000/api/v1/create-order")).data)
-        console.log(response)
-
-        if(response.success !== true) throw new ApiError(400,"something went wrong while creating order ")
-
-        const options = {
-            "key_id": ""+response.key_id+"",
-            "amount": ""+response.amount+"",
-            "currency": "INR",
-            "name": ""+response.product_name+"",
-            "description": ""+response.description+"",
-            "image": "https://dummyimage.com/600x400/000/fff",
-            "order_id": ""+response.order_id+"",
-            "handler": function (response:any){
-             console.log("payment successfully");
-            },
-            "prefill": {
-                "contact":""+response.contact+"",
-                "name": ""+response.name+"",
-                "email": ""+response.email+""
-            },
-            "notes" : {
-                "description":""+response.description+""
-            },
-            "theme": {
-                "color": "#2300a3"
-            }
-        };
-        const razorpayObject:any = new Razorpay(options);
-        // razorpayObject.on('payment.failed', function (response:any){
-        //       console.log("payment failed");
-        // });
-        razorpayObject.open();
-        console.log("payment success");
-        
-    } catch (error) {
-        console.log(error);
-    }
-
 })
 
 
 
 
-export { createOrder , checkOut}
+export { createOrder , renderHtmlFile}

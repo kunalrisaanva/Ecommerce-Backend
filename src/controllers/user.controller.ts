@@ -10,7 +10,6 @@ import  {
 import { cloudinaryUploader } from '../utils/cloudinary.js'
 import { CustomRequest } from "../types/types.js"
 import  { mailSender  }  from '../utils/nodeMailer.js'
-// import { uploadToS3 } from "../middlewares/S3Upload.middleware.js"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { User } from "../models/user.models.js"
 import crypto from "crypto"
@@ -443,22 +442,6 @@ const getCurrentUser = asyncHandler( async(
 }) 
 
 
-const test = asyncHandler(async(req,res)=>{
-    const file =  req.file
-    console.log(req.file);
-
-    // if(file?.path){
-
-    //     uploadToS3(file?.path)
-    // }else{
-    //     console.log("not uploaded ");
-    // }
-    
-  
-})
-
-
-
 
 
 export { 
@@ -473,6 +456,4 @@ export {
   updateAccountDetails,
   forgetPassword,
   resetPassword,
-  test
-
    }

@@ -10,11 +10,9 @@ import {
     chageCurrentPassword,
     forgetPassword,
     resetPassword,
-    test
  } from "../controllers/user.controller.js"
 
 import { upload } from "../middlewares/multer.middleware.js"
-import { uploadToS3 } from "../middlewares/S3Upload.middleware.js"   //ToDo: upload image into s3 buket cover it later
 import { verifyJwt as verifyRoute } from '../middlewares/auth.middleware.js'
 
 const router = Router();
@@ -43,12 +41,6 @@ router.route("/chane-currenet-password").patch(verifyRoute,chageCurrentPassword)
 router.route("/forget-password").post(forgetPassword);
 
 router.route("/resetPassword/:token").patch(resetPassword);
-
-
-// router.route("/test").post(upload.single("userImage"),test);
-router.route("/test").post(uploadToS3.single("userImage"),test);
-
-
 
 // // only user image update  route
 

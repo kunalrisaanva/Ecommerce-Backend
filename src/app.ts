@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import passport from "passport"
 import cookieParser from "cookie-parser";
-import cookieSession from "cookie-session"
 import NodeCache from "node-cache";
 import session from 'express-session';
 import {configureGoogleStrategy} from './middlewares/passoprt.middleware.js';
@@ -10,20 +9,19 @@ import {configureGoogleStrategy} from './middlewares/passoprt.middleware.js';
 
 const app = express();
 
+
+// cacheing initalize 
 export const nodeCache = new NodeCache();  // data store in mermory 
 
+
+// cors configraion 
 app.use(cors({
     origin:process.env.origin,
     credentials:true
 }))
 
-// Middleware for session management
 
-// app.use(cookieSession({
-//     name:"session",
-//     keys:["sessionKey"],
-//     maxAge:24*60*60*100
-// }))
+// session configration 
 
 app.use(session({
     secret: 'your_secret_key',
@@ -64,17 +62,13 @@ import paymentRouter from "./routes/payment.routes.js"
 
 
 
-app.use("/api/v1/user/",userRouter); // url = " http"//localhost:7000/api/v1/user/"
+app.use("/api/v1/user/",userRouter);
 app.use(googleAuthRouter); // url = http:localhost:7000/api/v1/
 app.use("/api/v1/product/",productRouter);
 app.use("/api/v1/user/order",orderRouter);
 app.use("/api/v1/user/category",categoryRouter);
-// app.use("/api/v1",paymentRouter);
 app.use('/api/v1',paymentRouter);
 app.use("/api/v1/health",healthRouter);
-
-
-
 
 
 export { app }

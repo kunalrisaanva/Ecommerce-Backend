@@ -1,5 +1,3 @@
-import { ExistingObjectReplicationStatus } from "@aws-sdk/client-s3";
-import { NumberLengthBetween12And19 } from "aws-sdk/clients/paymentcryptographydata.js";
 import {Request , Response , NextFunction} from "express"
 import { ObjectId, Schema } from "mongoose";
 

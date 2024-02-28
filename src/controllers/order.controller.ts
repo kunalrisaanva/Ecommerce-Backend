@@ -73,7 +73,6 @@ const getAllOrder = asyncHandler(async (req,res)=> {
 })
 
 
-
 const getSingleOrder = asyncHandler( async(req,res) => {
     //Todo: get single order 
 
