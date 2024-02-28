@@ -39,7 +39,7 @@ app.use(passport.session());
 
 app.use(express.json({limit:"64kb"}));
 app.use(express.urlencoded({extended:true , limit:"16kb"}));
-app.use(express.static("public"));
+app.use(express.static('public'));
 
 
 
@@ -59,6 +59,8 @@ import orderRouter from "./routes/order.routes.js";
 import categoryRouter from "./routes/categories.routes.js";
 import healthRouter from "./routes/health.routes.js";
 import googleAuthRouter from "./routes/googleAuth.routes.js"
+import paymentRouter from "./routes/payment.routes.js"
+
 
 
 
@@ -67,7 +69,10 @@ app.use(googleAuthRouter); // url = http:localhost:7000/api/v1/
 app.use("/api/v1/product/",productRouter);
 app.use("/api/v1/user/order",orderRouter);
 app.use("/api/v1/user/category",categoryRouter);
+// app.use("/api/v1",paymentRouter);
+app.use('/api/v1',paymentRouter);
 app.use("/api/v1/health",healthRouter);
+
 
 
 
