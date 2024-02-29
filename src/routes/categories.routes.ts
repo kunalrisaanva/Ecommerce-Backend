@@ -4,7 +4,7 @@ addCategory,
 getAllCategories,
 editCategory,
 deleteCategory
-} from "../controllers/categories.js";
+} from "../controllers/categories.controller.js";
 
 import { verifyJwt } from "../middlewares/auth.middleware.js"
 import { isAdmin }  from "../middlewares/admin.middleware.js"

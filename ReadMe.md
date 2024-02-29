@@ -1,8 +1,7 @@
 # Ecommerce-Backend-Project
 
 
-- [Model Design link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj?origin=share)
-
+- [Model Design link](https://app.eraser.io/workspace/4ueYEd8t9PzWXAOMwXqc)
 - [Postman Api Documentation](https://documenter.getpostman.com/view/21582927/2s9YysCgvY)
 
 ---
@@ -19,7 +18,7 @@ Project uses all standard practices like JWT, bcrypt, access tokens, refresh Tok
 
 - **User Authentication**: Secure and seamless login/signup functionalities.
 - **Video Management**: Easily upload and manage videos for users.
-- **Engagement Features**: Implementing features like likes, dislikes, comments, replies, subscribe, and unsubscribe.
+- **Engagement Features**: Implementing features like login with google and admin can add ,delete ,edit product. add to cart functionality. Configured payment gateway settings
 - **Security Practices**: Adhering to industry standards with JWT (JSON Web Tokens), Bcrypt for password hashing, and robust access token management.
 
 ## Technologies Used
@@ -30,8 +29,13 @@ Project uses all standard practices like JWT, bcrypt, access tokens, refresh Tok
 - **Bcrypt**: Safeguarding user passwords with industry-standard hashing.
 - **Access Tokens and Refresh Tokens**: Enhancing security and user experience.
 - **Cloudinary**: Instead of save videos and images  into DB We use cloudinary for uploading files and extract url And save into DB 
+- **In-Memory Storage:**: Node.js Cache stores cached data in memory, making retrieval fast and efficient. 
+- **Authentication:**: Implemented user authentication using OAuth 2.0 protocol with Passport.js library, specifically utilizing the passport-google-oauth20 strategy for Google Login integration.
+- **Payment Integration:**:Integrated payment gateway solutions such as Razorpay for secure and seamless transaction processing.
 
 ---
 ### Run locally
 - `git clone  `
 - `npm install `
+- `npm run build`
+-  `npm run dev`

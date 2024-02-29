@@ -1,0 +1,25 @@
+import { Router } from "express";
+import { addToCart , 
+    deleteAllPoducIntoCarts,
+    removeToCartProdcuts, 
+    getCartProducts
+} from "../controllers/cart.controller.js"
+import { verifyJwt } from "../middlewares/auth.middleware.js";
+
+
+
+const router = Router()
+
+// router.use(verifyJwt)
+
+
+router.route("/addToCart/:productId").post(addToCart);
+router.route("/deleteTOCart/:productId").post();
+router.route("/deleteTOCart/:productId").post();
+
+
+router.route("/").get()
+
+
+
+export default router

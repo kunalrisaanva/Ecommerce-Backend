@@ -58,6 +58,7 @@ import categoryRouter from "./routes/categories.routes.js";
 import healthRouter from "./routes/health.routes.js";
 import googleAuthRouter from "./routes/googleAuth.routes.js"
 import paymentRouter from "./routes/payment.routes.js"
+import cartRouter from "./routes/cart.routes.js"
 
 
 
@@ -68,6 +69,7 @@ app.use("/api/v1/product/",productRouter);
 app.use("/api/v1/user/order",orderRouter);
 app.use("/api/v1/user/category",categoryRouter);
 app.use('/api/v1',paymentRouter);
+app.use("/api/v1/cart",cartRouter)
 app.use("/api/v1/health",healthRouter);
 
 

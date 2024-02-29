@@ -3,7 +3,7 @@ import { Request,Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {fileURLToPath} from "url"
 import path from "path"
-import axios from "axios";
+// import axios from "axios";
 import { ApiError } from "../utils/ApiError.js";
 
 
@@ -31,7 +31,7 @@ const createOrder = asyncHandler(async(req:Request,res:Response)=>{
     try {
         const amount = req.body.amount*100
         const options = {
-            amount: 1000,// giving staticly 
+            amount: amount,
             currency: 'INR',
             receipt: 'razorUser@gmail.com'
         }
@@ -42,11 +42,11 @@ const createOrder = asyncHandler(async(req:Request,res:Response)=>{
                         success:true,
                         msg:'Order Created',
                         order_id:order.id,
-                        amount:1000, // giving staticly 
+                        amount:amount,
                         key_id:process.env.RAZORPAY_KEY_ID!,
                         product_name:"tshirt",
                         description:"nike tshirt descriptioin",
-                        contact:"8307339859",
+                        contact:"8307339859",   // i am providing staticaly data 
                         name: "kunal",
                         email: "kunalrissanva12@gmail.com"
                     });
