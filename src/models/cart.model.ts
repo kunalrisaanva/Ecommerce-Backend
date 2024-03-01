@@ -8,11 +8,11 @@ const cartSchema = new Schema( {
         ref: 'User'
       },
 
-    items: [
-        {
+    items: [{ 
+      productId:{
           type: Schema.Types.ObjectId,
           ref: "Product",
-        }
+        }}
       ],
 
  

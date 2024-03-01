@@ -9,6 +9,7 @@ import { User } from "../models/user.models.js";
 
 
 
+
 const addToCart = asyncHandler(async (req:IRequest,res) => {
   
     //TOdo: add to cart product
@@ -25,22 +26,33 @@ const addToCart = asyncHandler(async (req:IRequest,res) => {
 
     if(!isUserExist) throw new ApiError(404," user not found ")
 
-    const isCartExist = await Cart.exists({userId:"65d2e033f466cc7b3aad3a25"});
-   
+    const isCartExist = await Cart.exists({userId:req.userId});
+
+    const isProductExistInCart = await Cart.findOne({"items.productId":productId});
+
+    
+    if(isProductExistInCart) throw new ApiError(400, " this proudct already in cart ")
+    
+    console.log(isProductExistInCart);
+
     let createdCart;
 
     if(!isCartExist){
+        console.log("1");
         createdCart = await Cart.create({
-                    userId:"65d2e033f466cc7b3aad3a25",
-                    items:productId
+                    userId:req.userId,
+                    items: [{ productId: productId }]
                 })
+
     }else{
-        createdCart = await Cart.findOneAndUpdate({userId:"65d2e033f466cc7b3aad3a25"},{
+        console.log("2");
+        createdCart = await Cart.findOneAndUpdate({userId:req.userId},{
                     $push:{
-                        items:productId
+                        items:[{productId:productId}]
                     }
-                })
+                },{new:true})
     }
+    
     
 
     if(!createdCart) throw new ApiError(404,"cart not found ");
@@ -58,7 +70,7 @@ const addToCart = asyncHandler(async (req:IRequest,res) => {
 const deleteAllPoducIntoCarts = asyncHandler(async (req:IRequest,res) => {
     //TOdo: clear all products
 
-    const deleteCart = await Cart.findOneAndDelete({userId:req.userId});
+    const deleteCart = await Cart.deleteMany({userId:req.userId});
 
     if(!deleteCart) throw new ApiError(404,"cart dosn't exist")
 
@@ -75,18 +87,19 @@ const removeToCartProdcuts = asyncHandler(async (req:IRequest,res) => {
     
     //ToDo: remove products into cart
 
-    const {productId} = req.params
-
-    const isExistedIntoCart = await Cart.findById(productId);
+    const { productId } = req.params
+    
+    const isExistedIntoCart = await Product.findById(productId);
 
     if(!isExistedIntoCart) throw new ApiError(404,"product not found to delete");
 
-    const updatedCart =  await Cart.updateOne({userId:req.userId},{
-        $pull:{
-            productId:productId
-        }
-    },{new:true});
 
+
+    const updatedCart =  await Cart.findOneAndUpdate({userId:req.userId},{
+        $pull:{
+            items:productId
+        }
+    });
 
     return res
     .status(200)
@@ -98,8 +111,22 @@ const removeToCartProdcuts = asyncHandler(async (req:IRequest,res) => {
 })
 
 
-const getCartProducts = asyncHandler( async(req,res) => {
+
+
+const getCartProducts = asyncHandler( async(req:IRequest,res) => {
     //ToDo: get all the product exists in cart model 
+
+    const cartProducts = Cart.find({userId:req.userId}) 
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,cartProducts," cart products feched successfully ")
+    )
+
+    
+
+
 })
 
 
@@ -111,3 +138,5 @@ export {
     removeToCartProdcuts,
     getCartProducts
 }
+
+

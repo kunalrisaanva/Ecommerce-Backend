@@ -10,15 +10,14 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router()
 
-// router.use(verifyJwt)
+router.use(verifyJwt)
 
 
 router.route("/addToCart/:productId").post(addToCart);
-router.route("/deleteTOCart/:productId").post();
-router.route("/deleteTOCart/:productId").post();
+router.route("/:productId").patch(removeToCartProdcuts).delete(deleteAllPoducIntoCarts);
 
 
-router.route("/").get()
+router.route("/cart-products").get(getCartProducts);
 
 
 
