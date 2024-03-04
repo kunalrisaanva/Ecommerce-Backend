@@ -2,7 +2,7 @@
 
 
 - [Model Design link](https://app.eraser.io/workspace/4ueYEd8t9PzWXAOMwXqc)
-- [Postman Api Documentation](https://documenter.getpostman.com/view/21582927/2s9YysCgvY)
+- [Postman Api Documentation](https://documenter.getpostman.com/view/21582927/2sA2xcZZnv)
 
 ---
 # Summary of this project
@@ -38,4 +38,4 @@ Project uses all standard practices like JWT, bcrypt, access tokens, refresh Tok
 - `git clone  `
 - `npm install `
 - `npm run build`
--  `npm run dev`
+- `npm run dev`
