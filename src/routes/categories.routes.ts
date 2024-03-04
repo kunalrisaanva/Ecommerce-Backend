@@ -3,22 +3,21 @@ import {
 addCategory,
 getAllCategories,
 editCategory,
-deleteCategory
+deleteCategory,
+searchCategory
 } from "../controllers/categories.controller.js";
 
 import { verifyJwt } from "../middlewares/auth.middleware.js"
 import { isAdmin }  from "../middlewares/admin.middleware.js"
 
-
-
 const router = express.Router()
 
-router.route("/add-category").post();
-router.route("/get-all-category").get();
-router.route("/edit-category/:categoryId").patch();
-router.route("/delete-category").delete();
+// router.use(verifyJwt);
 
-
+router.route("/add-category").post(addCategory);
+router.route("/get-all-category").get(getAllCategories);
+router.route("/search-category").get(searchCategory);
+router.route("/:categoryId").patch(editCategory).delete(deleteCategory);
 
 
 

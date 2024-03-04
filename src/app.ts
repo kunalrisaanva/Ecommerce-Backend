@@ -66,8 +66,8 @@ import cartRouter from "./routes/cart.routes.js"
 app.use("/api/v1/user/",userRouter);
 app.use(googleAuthRouter); // url = http:localhost:7000/api/v1/
 app.use("/api/v1/product/",productRouter);
-app.use("/api/v1/user/order",orderRouter);
-app.use("/api/v1/user/category",categoryRouter);
+app.use("/api/v1/order",orderRouter);
+app.use("/api/v1/category",categoryRouter);
 app.use('/api/v1',paymentRouter);
 app.use("/api/v1/cart",cartRouter)
 app.use("/api/v1/health",healthRouter);

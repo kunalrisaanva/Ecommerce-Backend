@@ -7,8 +7,6 @@ import { isValidObjectId } from 'mongoose';
 import { nodeCache } from '../app.js';
 
 
-
-
 const getAllCategories = asyncHandler(async (req,res)=> {
 
     
@@ -19,15 +17,12 @@ const getAllCategories = asyncHandler(async (req,res)=> {
     categories = JSON.parse(nodeCache.get("categories")!)
 
     else{
-        const categories = await Category.distinct("name");
+        categories = await Category.distinct("name");
         nodeCache.set("categories",JSON.stringify(categories) as string );
 
     }
 
-
     if(!categories) throw new ApiError(404,"something went wrong while collecting categories");
-
-
 
     return res
     .status(200)
@@ -64,13 +59,15 @@ const editCategory = asyncHandler( async(req,res) => {
  // Todo: edite category oonly admin 
 
     const categoryId = req.params
+    console.log(categoryId.categoryId);
 
-    if(! isValidObjectId(categoryId)) throw new ApiError(400,"invalid category Id");
+    if(!isValidObjectId(categoryId.categoryId)) throw new ApiError(400,"invalid category Id");
      
     const name = req.body
-    const category = await Category.findByIdAndUpdate({_id:categoryId},{
+   
+    const category = await Category.findByIdAndUpdate({_id:categoryId.categoryId},{
         $set:{
-            name
+            name:name.name
         }
     },{new:true})
 
@@ -86,11 +83,11 @@ const deleteCategory = asyncHandler( async(req,res) => {
  // Todo: delete category oonly admin 
   const categoryId = req.params
 
-  const isCategoryExisted = await Category.findById(categoryId);
+  const isCategoryExisted = await Category.findById(categoryId.categoryId);
 
   if(!isCategoryExisted) throw new ApiError(404,"category does't exists")
 
-    await Category.findByIdAndDelete(categoryId)
+    await Category.findByIdAndDelete(categoryId.categoryId)
 
         return res
         .status(200)
@@ -105,8 +102,7 @@ const searchCategory = asyncHandler( async(req,res) => {
 
 
     const { category } = req.query
-
-    
+  
     const searchCategory = await Category.find({ name:{ $regex:category , $options:"i"}  })
 
     if(!searchCategory) throw new ApiError(404," there is not category exist in This site")

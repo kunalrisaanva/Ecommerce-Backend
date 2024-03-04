@@ -6,7 +6,7 @@ import { Cart } from "../models/cart.model.js";
 import { Product } from "../models/product.models.js";
 import { IRequest } from "../middlewares/auth.middleware.js";
 import { User } from "../models/user.models.js";
-
+import { nodeCache } from "../app.js";
 
 
 
@@ -28,7 +28,7 @@ const addToCart = asyncHandler(async (req:IRequest,res) => {
 
     const isCartExist = await Cart.exists({userId:req.userId});
 
-    const isProductExistInCart = await Cart.findOne({"items.productId":productId});
+    const isProductExistInCart = await Cart.findOne({items:productId});
 
     
     if(isProductExistInCart) throw new ApiError(400, " this proudct already in cart ")
@@ -38,17 +38,17 @@ const addToCart = asyncHandler(async (req:IRequest,res) => {
     let createdCart;
 
     if(!isCartExist){
-        console.log("1");
+      
         createdCart = await Cart.create({
                     userId:req.userId,
-                    items: [{ productId: productId }]
+                    items: productId 
                 })
 
     }else{
-        console.log("2");
+        
         createdCart = await Cart.findOneAndUpdate({userId:req.userId},{
                     $push:{
-                        items:[{productId:productId}]
+                        items:productId
                     }
                 },{new:true})
     }
@@ -93,13 +93,11 @@ const removeToCartProdcuts = asyncHandler(async (req:IRequest,res) => {
 
     if(!isExistedIntoCart) throw new ApiError(404,"product not found to delete");
 
-
-
     const updatedCart =  await Cart.findOneAndUpdate({userId:req.userId},{
         $pull:{
             items:productId
         }
-    });
+    },{new:true});
 
     return res
     .status(200)
@@ -116,15 +114,22 @@ const removeToCartProdcuts = asyncHandler(async (req:IRequest,res) => {
 const getCartProducts = asyncHandler( async(req:IRequest,res) => {
     //ToDo: get all the product exists in cart model 
 
-    const cartProducts = Cart.find({userId:req.userId}) 
+    let cartProducts;
+
+    if(nodeCache.has("cart-Products")) {
+        cartProducts = JSON.parse(nodeCache.get("cart-Products")!) 
+    }
+
+    else{
+        cartProducts = await Cart.find({userId:req.userId});
+        nodeCache.set("cart-Products",JSON.stringify(cartProducts));
+    }
 
     return res
     .status(200)
     .json(
         new ApiResponse(200,cartProducts," cart products feched successfully ")
     )
-
-    
 
 
 })

@@ -13,6 +13,7 @@ const router = Router()
 router.use(verifyJwt)
 
 
+
 router.route("/addToCart/:productId").post(addToCart);
 router.route("/:productId").patch(removeToCartProdcuts).delete(deleteAllPoducIntoCarts);
 
