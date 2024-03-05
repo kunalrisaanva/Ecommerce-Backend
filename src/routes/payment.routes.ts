@@ -12,7 +12,6 @@ router.route('/prduct-buy').get(renderHtmlFile)  // url http://localhost:7000/ap
 
 
 
-
 export default router
 
 

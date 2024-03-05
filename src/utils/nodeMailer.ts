@@ -7,9 +7,10 @@ export const mailSender = (userEmail:string , message:string ) => {
     try {
 
         // Create a Nodemailer transporter
+        console.log("start email server ");
 
         const transporter = nodemailer.createTransport({
-            host: 'smtp.example.com',
+            host: 'smtp.gmail.com',
             port: 587, 
             secure: false, 
             auth: {
@@ -21,9 +22,9 @@ export const mailSender = (userEmail:string , message:string ) => {
         // Email content
         
         const mailOptions = {
-            // from: 'yourusername@example.com', // Sender address
+            // from: 'kunalrisaanva12@gmail.com', // Sender address
             to: userEmail,
-            subject: 'Test Email', 
+            subject: 'Reset Passsword Email', 
             text: message 
         };
 

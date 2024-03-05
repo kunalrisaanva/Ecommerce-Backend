@@ -1,4 +1,4 @@
-import { Router , Request , Response } from "express";
+import { Router } from "express";
 import { 
     registerUser,
     logInUser,
@@ -41,9 +41,6 @@ router.route("/chane-currenet-password").patch(verifyRoute,chageCurrentPassword)
 router.route("/forget-password").post(forgetPassword);
 
 router.route("/resetPassword/:token").patch(resetPassword);
-
-// // only user image update  route
-
 
 
 export default router

@@ -58,16 +58,16 @@ const  addCategory = asyncHandler( async(req,res) => {
 const editCategory = asyncHandler( async(req,res) => {
  // Todo: edite category oonly admin 
 
-    const categoryId = req.params
-    console.log(categoryId.categoryId);
+    const { categoryId } = req.params
+    // console.log(categoryId.categoryId);
 
-    if(!isValidObjectId(categoryId.categoryId)) throw new ApiError(400,"invalid category Id");
+    if(!isValidObjectId(categoryId)) throw new ApiError(400,"invalid category Id");
      
-    const name = req.body
+    const {name} = req.body
    
-    const category = await Category.findByIdAndUpdate({_id:categoryId.categoryId},{
+    const category = await Category.findByIdAndUpdate({_id:categoryId},{
         $set:{
-            name:name.name
+            name:name
         }
     },{new:true})
 
@@ -100,13 +100,11 @@ const deleteCategory = asyncHandler( async(req,res) => {
 
 const searchCategory = asyncHandler( async(req,res) => {
 
-
     const { category } = req.query
   
     const searchCategory = await Category.find({ name:{ $regex:category , $options:"i"}  })
 
     if(!searchCategory) throw new ApiError(404," there is not category exist in This site")
-
 
     return res
     .status(200)

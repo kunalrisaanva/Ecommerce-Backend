@@ -12,12 +12,13 @@ import { isAdmin }  from "../middlewares/admin.middleware.js"
 
 const router = express.Router()
 
-// router.use(verifyJwt);
+router.use(verifyJwt);
+// router.use(isAdmin);
 
-router.route("/add-category").post(addCategory);
+router.route("/add-category").post(isAdmin,addCategory);
 router.route("/get-all-category").get(getAllCategories);
 router.route("/search-category").get(searchCategory);
-router.route("/:categoryId").patch(editCategory).delete(deleteCategory);
+router.route("/:categoryId").patch(isAdmin,editCategory).delete(deleteCategory);
 
 
 

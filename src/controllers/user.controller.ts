@@ -272,7 +272,7 @@ const forgetPassword = asyncHandler( async(req,res)=>{
        const { email } = req.body
     
        const user = await User.findOne({email});
-
+    
        if(!user){
         throw new ApiError(404)," User not found "
        }
@@ -283,7 +283,7 @@ const forgetPassword = asyncHandler( async(req,res)=>{
        // sent token via email
        console.log(user.email)
        let userEmail = user.email
-       mailSender(userEmail,message);
+      await mailSender(userEmail,message);
        
        return res
        .status(200) 
@@ -292,11 +292,8 @@ const forgetPassword = asyncHandler( async(req,res)=>{
             200,
             {},
             `Reset Token has been sent to ${user.email} `
-
         )
        )
-
-      
 
 });
 
@@ -387,15 +384,7 @@ const updateProfileImage = asyncHandler(async (req:IRequest, res) => {
     }
 
     const response = await cloudinaryUploader(userImage);
-        // to do delete old image 
-
-    //  { 
-     // cloudinary.v2.api
-     // .delete_resources(['user cover image'], 
-     //   { type: 'upload', resource_type: 'image' })
-     // .then(console.log);}
-
-
+       
     const user = await User.findByIdAndUpdate(req.userId, {
         $set: {
             userImage: response? response.url : '',
